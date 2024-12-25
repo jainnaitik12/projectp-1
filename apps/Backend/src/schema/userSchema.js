@@ -5,16 +5,48 @@ import bcrypt from 'bcrypt';
 const schema = _Schema;
 
 const UserSchema = schema({
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+   email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+     password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+
+    isVerified: { type: Boolean, default: false },
+    
     superadmin: { type: Boolean, default: false },
+
     admin: { type: Boolean, default: false },
+
     pcc: { type: Boolean, default: false },
-    user_role: { type: String, enum: ['admin', 'student', 'company'], required: true },
+      
+    role: {
+      type: String,
+      enum: ["student", "admin","company"],
+      required: true,
+    },
+
+    Student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: function () {
+        return this.role === "student";
+      },
+    },
     lastLogin: { type: Date },
+
     authToken: { type: String, default: "" },
+
     refreshToken: { type: String, default: "" },
+
     avatar: { type: String, default: "" }
+
 }, { timestamp: true });
 
 UserSchema.pre('save', async function (next) {
