@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-
-const jnfSchema = new mongoose.Schema(
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+const JNFSchema = new Schema(
   {
     companyDetails: {
       name: { type: String, required: true },
@@ -128,4 +128,6 @@ const jnfSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("JNF", jnfSchema);
+const JNF = model('JNF', JNFSchema);
+
+export default JNF;

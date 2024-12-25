@@ -1,4 +1,7 @@
-const adminPermissionSchema = new mongoose.Schema(
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+
+const AdminPermissionSchema = new Schema(
   {
     admin: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +31,6 @@ const adminPermissionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export const AdminPermission = mongoose.model(
-  "AdminPermission",
-  adminPermissionSchema
-);
+const AdminPermission = model('AdminPermission', AdminPermissionSchema);
+
+export default AdminPermission;
