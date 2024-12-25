@@ -1,13 +1,21 @@
 import { Schema as _Schema, model } from 'mongoose';
 const Schema = _Schema;
 
+const PermissionEnum = {
+  READ: 'READ',
+  WRITE: 'WRITE',
+  DELETE: 'DELETE',
+  UPDATE: 'UPDATE',
+};
+
 const AdminSchema = new Schema(
   {
     userid: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     permissions: [
       {
-       type:mongoose.Schema.Types.ObjectId,
-        ref:'AdminPermission'
+        type: String,
+        required: false,
+        enum: Object.values(PermissionEnum),
       },
     ],
   },
