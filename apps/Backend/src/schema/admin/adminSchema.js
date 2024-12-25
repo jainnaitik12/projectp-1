@@ -17,4 +17,4 @@ const AdminSchema = new Schema(
 const Admin = model('Admin', AdminSchema);
 
 export default Admin;
-export { PermissionEnum };
+

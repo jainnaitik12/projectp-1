@@ -1,4 +1,4 @@
-import { Schema as _Schema, model } from "mongoose";
+import { Schema as _Schema, model,mongoose } from "mongoose";
 import jsonwebtoken from 'jsonwebtoken';
 const { sign } = jsonwebtoken;
 import bcrypt from 'bcrypt';
@@ -26,11 +26,7 @@ const UserSchema = schema({
 
     pcc: { type: Boolean, default: false },
       
-    role: {
-      type: String,
-      enum: ["student", "admin","company"],
-      required: true,
-    },
+    user_role: { type: String, enum: ['admin', 'student', 'company'], required: true },
 
     Student: {
       type: mongoose.Schema.Types.ObjectId,

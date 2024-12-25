@@ -1,4 +1,6 @@
-const bulkStatusUpdateSchema = new mongoose.Schema(
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+const BulkStatusUpdateSchema = new Schema(
   {
     job: {
       type: mongoose.Schema.Types.ObjectId,
@@ -21,7 +23,7 @@ const bulkStatusUpdateSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export const BulkStatusUpdate = mongoose.model(
-  "BulkStatusUpdate",
-  bulkStatusUpdateSchema
-);
+
+const BulkStatusUpdate = model('BulkStatusUpdate', BulkStatusUpdateSchema);
+
+export default BulkStatusUpdate;

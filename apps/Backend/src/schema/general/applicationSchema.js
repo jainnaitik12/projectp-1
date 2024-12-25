@@ -1,7 +1,7 @@
-// backend/models/Application.js
-const mongoose = require("mongoose");
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
 
-const applicationSchema = new mongoose.Schema({
+const ApplicationSchema = new Schema({
   student: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -25,6 +25,11 @@ const applicationSchema = new mongoose.Schema({
       date: Date,
     },
   ],
+  timeline: [{
+    status: String,
+    date: { type: Date, default: Date.now },
+    remarks: String
+  }],
   documents: [
     {
       type: String,
@@ -61,4 +66,7 @@ applicationSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Application", applicationSchema);
+
+const Application = model('Application', ApplicationSchema);
+
+export default Application;

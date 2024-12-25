@@ -1,6 +1,7 @@
-import { mongo } from "mongoose";
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;;
 
-const companySchema = new mongoose.Schema(
+const CompanySchema = new Schema(
     {
      user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     
@@ -11,4 +12,6 @@ const companySchema = new mongoose.Schema(
     }],
 }
 )
-export const Company = mongoose.model("Company", companySchema);
+const Company = model('Company', CompanySchema);
+
+export default Company;

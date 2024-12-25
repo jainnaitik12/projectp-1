@@ -1,3 +1,7 @@
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+
+
 const StudentSchema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -95,4 +99,7 @@ const StudentSchema = new Schema({
   }]
 }, { timestamps: true });
 
+const Student = model('Student', StudentSchema);
+
+export default Student;
 //middleware to prevent modification of locked fields

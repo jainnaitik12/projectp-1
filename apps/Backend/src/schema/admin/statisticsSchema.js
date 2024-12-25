@@ -1,4 +1,6 @@
-const placementAnalyticsSchema = new mongoose.Schema(
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+const PlacementAnalyticsSchema = new Schema(
   {
     academicYear: { type: String, required: true },
     totalStudents: Number,
@@ -28,4 +30,6 @@ export const PlacementAnalytics = mongoose.model(
   "PlacementAnalytics",
   placementAnalyticsSchema
 );
-module.exports = PlacementAnalytics;
+const PlacementAnalytics = model('PlacementAnalytics', PlacementAnalyticsSchema);
+
+export default PlacementAnalytics;

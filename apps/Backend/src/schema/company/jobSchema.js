@@ -1,4 +1,8 @@
-const jobSchema = new mongoose.Schema(
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
+
+
+const JobSchema = new Schema(
   {
     company: { type: String, required: true },
     title: { type: String, required: true },
@@ -64,4 +68,7 @@ const jobSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export const Job = mongoose.model("Job", jobSchema);
+
+const Job = model('Job', JobSchema);
+
+export default Job;
