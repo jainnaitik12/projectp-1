@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(router);
+app.use("/api/v1",router);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
