@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
 });
 
 router.use("/user", userRouter); // dev 
-router.use("/admin", adminRouter); //shivam
-router.use("/event", eventRouter); //uday
+router.use("/admin", adminRouter); //uday
+router.use("/event", eventRouter); //shivam
 router.use("/company", companyRouter); //akansha
 router.use("/student", studentRouter); //naveen
 

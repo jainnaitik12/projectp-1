@@ -6,7 +6,6 @@ class userServices {
     }
 
     async createUser(userData) {
-        console.log("Service layer: createUser called");
         const response = await this.UserModel.createUser(userData);
         return response;
     }
