@@ -1,12 +1,12 @@
 import { Schema as _Schema, model,mongoose } from 'mongoose';
 const Schema = _Schema;
 
-const linkSchema = new mongoose.Schema({
+const linkSchema = new Schema({
   type: String,
   url: String,
 });
 
-const projectSchema = new mongoose.Schema({
+const projectSchema = new Schema({
   title: String,
   description: String,
   technologies: [String],
@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema({
 });
 const StudentSchema = new Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
@@ -81,7 +81,7 @@ const StudentSchema = new Schema({
   ],
   projects: [projectSchema],
 applications: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Application'
 }],
   // Verification metadata
@@ -91,7 +91,7 @@ applications: [{
     default: "pending",
   },
   verifiedBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
   },
   verificationDate: Date,
@@ -102,7 +102,7 @@ applications: [{
     oldValue: Schema.Types.Mixed,
     newValue: Schema.Types.Mixed,
     modifiedBy: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User"
     },
     modifiedAt: {

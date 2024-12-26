@@ -3,12 +3,12 @@ const Schema = _Schema;
 const BulkStatusUpdateSchema = new Schema(
   {
     job: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Job",
       required: true,
     },
     uploadedBy: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },

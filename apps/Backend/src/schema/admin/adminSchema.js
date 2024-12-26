@@ -6,7 +6,7 @@ const AdminSchema = new Schema(
     userid: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     permissions: [
       {
-       type:mongoose.Schema.Types.ObjectId,
+       type: Schema.Types.ObjectId,
         ref:'AdminPermission'
       },
     ],

@@ -32,7 +32,7 @@ const JobSchema = new Schema(
       default: "open",
     },
     createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -43,7 +43,7 @@ const JobSchema = new Schema(
     applicationDeadline: Date,
    
     jnf: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "JNF",
       required: true,
     },
@@ -54,7 +54,7 @@ const JobSchema = new Schema(
     },
 
     adminApproval: {
-      approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      approvedBy: { type: Schema.Types.ObjectId, ref: "User" },
       approvedAt: Date,
       comments: String,
     },

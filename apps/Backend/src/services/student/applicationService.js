@@ -3,7 +3,7 @@ import Job from "../../schema/company/jobSchema.js";
 import Student from "../../schema/student/studentSchema.js";
 import apiResponse from "../../utils/apiResponse.js";
 
-
+//for student : to get all jobs details and his applied jobs details
 export default class ApplicationService{
    
     async applyForJob(studentId, jobId) {
@@ -90,4 +90,5 @@ export default class ApplicationService{
             return new apiResponse(500, null, error.message);
         }
     }
+
 }

@@ -4,6 +4,12 @@ import apiResponse from "../utils/apiResponse.js";
 export default class userModel {
     user = User
     async createUser(userData) {
+
+     const existingUser = await this.user.findOne({ email: userData.email });
+            if (existingUser) {
+                return new apiResponse(400, null, "Email already exists");
+            }
+
         const { email, password, user_role, avatar, superadmin, pcc, admin } = userData;
         try {
             const createdUser = await this.user.create({
@@ -15,9 +21,9 @@ export default class userModel {
                 pcc: pcc,
                 admin: admin
             })
-            return new apiResponse(200, createdUser, "User created successfully");
+            return new apiResponse(201, createdUser, "User created successfully");
         } catch (error) {
-            return new apiResponse(500, "Internal server error");
+            return new apiResponse(500,null,error.message);
         }
     }
 
