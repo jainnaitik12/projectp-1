@@ -2,10 +2,9 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import StudentService from "../../services/student/studentService.js";
 
 export default class StudentController {
-    constructor(studentService) {
-        this.studentService = studentService;
+    constructor() {
+        this.studentService = new StudentService;
     }
-// basics controllers for students
     registerStudent = asyncHandler(async (req, res) => {
         const student = await this.studentService.registerStudent(req.body);
         res.status(student.statusCode).json(student);

@@ -1,4 +1,4 @@
-import Company  from "../schema/companySchema.js";
+import Company  from "../schema/company/companySchema.js";
 import apiResponse from "../utils/apiResponse.js";
 
 export default class companyModel {

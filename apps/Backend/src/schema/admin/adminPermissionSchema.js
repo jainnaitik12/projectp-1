@@ -19,8 +19,6 @@ const AdminPermissionSchema = new Schema(
           "viewAnalytics",
           "updateJobStatus",
           "contactRecruiter",
-          // New permissions to add
-          "manageAdmins", // For super admin
           "processStatusUpdates",
           "sendNotifications",
           "verifyJNF",
