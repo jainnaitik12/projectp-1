@@ -1,4 +1,4 @@
-import { Schema as _Schema, model } from 'mongoose';
+import { Schema as _Schema, model,mongoose } from 'mongoose';
 const Schema = _Schema;
 
 
@@ -68,6 +68,7 @@ const JobSchema = new Schema(
   },
   { timestamps: true }
 );
+
 
 const Job = model('Job', JobSchema);
 

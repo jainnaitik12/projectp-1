@@ -18,7 +18,9 @@ export default class adminModel {
         }
     }
     //done
+
     async createAdmin(adminData, id) {
+        
         try {
             const { permissions, userData } = adminData;
 

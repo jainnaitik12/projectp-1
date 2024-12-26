@@ -32,7 +32,7 @@ const UserSchema = schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
       required: function () {
-        return this.role === "student";
+        return this.user_role === "student";
       },
     },
     lastLogin: { type: Date },

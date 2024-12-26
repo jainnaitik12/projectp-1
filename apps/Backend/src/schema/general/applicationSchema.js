@@ -1,4 +1,5 @@
-import { Schema as _Schema, model } from 'mongoose';
+import { application } from 'express';
+import { Schema as _Schema, model,mongoose } from 'mongoose';
 const Schema = _Schema;
 
 const ApplicationSchema = new Schema({
@@ -61,12 +62,23 @@ const ApplicationSchema = new Schema({
 });
 
 
-applicationSchema.pre("save", function (next) {
+ApplicationSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
-
-
+// Validating round status change
+ApplicationSchema.pre('save',function(next){
+  if(this.isModified('status')){
+    if(this.isNew){
+      this.timeline.push({
+        status:this.status,
+        date: new Date(),
+        remarks: 'Application created'
+      })
+    }
+  }
+  next();
+})
 const Application = model('Application', ApplicationSchema);
 
 export default Application;
