@@ -24,10 +24,17 @@ export default class ApplicationService {
 
     async getApplicationsByStudent(studentId) {
         try {
+             const student = await this.studentServices.getStudentById(studentId);
+        if (student.statusCode === 404) {
+            return new apiResponse(404, null, "Student not found");
+        }
+
             const applications = await this.applicationModel.getApplicationsByStudent(studentId);
             return applications;
         } catch (error) {
-            return new apiResponse(500, null, error.message);
+             console.error("Service error:", error);
+        return new apiResponse(500, null, "Error fetching applications");
+            // return new apiResponse(500, null, error.message);
         }
     }
     async checkEligibility(student, job) {

@@ -1,13 +1,18 @@
 import UserModel from "../models/userModel.js";
-
+import apiResponse from "../utils/apiResponse.js";
 class userServices {
     constructor() {
         this.userModel = new UserModel();
     }
 
     async createUser(userData) {
-        const response = await this.userModel.createUser(userData);
-        return response;
+        try {
+            const response = await this.userModel.createUser(userData);
+            return response;
+        } catch (error) {
+            console.error("User service error:", error);
+            return new apiResponse(500, null, error.message);
+        }
     }
     async deleteUserById(userId){
         const response = await this.userModel.deleteUserById(userId);
