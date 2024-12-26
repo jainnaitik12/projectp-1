@@ -2,7 +2,7 @@ import { Schema as _Schema, model, mongoose } from "mongoose";
 import jsonwebtoken from 'jsonwebtoken';
 const { sign } = jsonwebtoken;
 import bcrypt from 'bcrypt';
-const schema = _Schema;
+const Schema = _Schema;
 
 const UserSchema = schema({
     email: {
@@ -28,17 +28,15 @@ const UserSchema = schema({
     user_role: { type: String, enum: ['admin', 'student', 'company'], required: true },
 
     Student: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Student",
         required: false,
     },
 
     Company: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Company",
-        required: function () {
-            return this.user_role === "company";
-        },
+        required: false,
     },
     lastLogin: { type: Date },
     authToken: { type: String, default: "" },
