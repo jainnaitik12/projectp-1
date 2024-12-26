@@ -4,7 +4,7 @@ const Schema = _Schema;
 const AdminPermissionSchema = new Schema(
   {
     admin: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -12,7 +12,6 @@ const AdminPermissionSchema = new Schema(
       {
         type: String,
         enum: [
-        
           "verifyStudent",
           "postJobs",
           "manageEvents",

@@ -1,37 +1,37 @@
-import { Schema as _Schema, model,mongoose } from "mongoose";
+import { Schema as _Schema, model, mongoose } from "mongoose";
 import jsonwebtoken from 'jsonwebtoken';
 const { sign } = jsonwebtoken;
 import bcrypt from 'bcrypt';
-const schema = _Schema;
+const Schema = _Schema;
 
-const UserSchema = schema({
-   email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
+const UserSchema = Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
-     password: {
-      type: String,
-      required: true,
-      select: false,
+    password: {
+        type: String,
+        required: true,
+        select: false,
     },
 
     isVerified: { type: Boolean, default: false },
-    
+
     superadmin: { type: Boolean, default: false },
 
     admin: { type: Boolean, default: false },
 
     pcc: { type: Boolean, default: false },
-      
+
     user_role: { type: String, enum: ['admin', 'student', 'company'], required: true },
 
     Student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: false,
+        type: Schema.Types.ObjectId,
+        ref: "Student",
+        required: false,
     },
     lastLogin: { type: Date },
 

@@ -13,16 +13,16 @@ const EventSchema = new Schema(
     venue: String,
     company: String,
     job: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Job",
     },
     attendees: [
       {
-        student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        student: { type: Schema.Types.ObjectId, ref: "User" },
         status: { type: String, enum: ["invited", "confirmed", "attended"] },
       },
     ],
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

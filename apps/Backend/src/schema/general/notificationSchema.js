@@ -2,12 +2,12 @@ import { Schema as _Schema, model } from 'mongoose';
 const Schema = _Schema;
 const NotificationSchema = new Schema({
     sender:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:"User",
         required:true
     },
     recipient : {
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref :"User",
         required : true
     },

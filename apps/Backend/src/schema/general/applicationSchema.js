@@ -4,12 +4,12 @@ const Schema = _Schema;
 
 const ApplicationSchema = new Schema({
   student: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
   job: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Job",
     required: true,
   },
@@ -49,7 +49,7 @@ const ApplicationSchema = new Schema({
   },
   notifications: [
     {
-     type:mongoose.Schema.Types.ObjectId,
+     type:Schema.Types.ObjectId,
      ref:"Notification"
     },
   ],
