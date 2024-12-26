@@ -3,7 +3,12 @@ import apiResponse from "../utils/apiResponse.js";
 import apiError from "../utils/apiError.js";
 
 class userModel {
+    user = User;
     async createUser(userData) {
+          const existingUser = await this.user.findOne({ email: userData.email });
+            if (existingUser) {
+                return new apiResponse(409, null, "Email already exists");
+            }
         const { email, password, user_role, avatar, superadmin, tpo, pcc } = userData;
         try {
             const createdUser = await User.create({
@@ -15,7 +20,7 @@ class userModel {
                 tpo,
                 pcc
             });
-            return new apiResponse(200, createdUser, "User created successfully");
+            return new apiResponse(201, createdUser, "User created successfully");
         } catch (error) {
             throw new apiError(500, "Internal server error", [error.message]);
         }
@@ -51,6 +56,18 @@ class userModel {
             throw new apiError(500, "Error updating user", [error.message]);
         }
     }
+    async deleteUserById(userId){
+    try {
+        const deletedUser  = await this.user.findByIdAndDelete(userId);
+        if (!deletedUser) {
+                return apiResponse(404,null, "User not found");
+            }
+        return new apiResponse(200,null,"User deleted successfully");
+    } catch (error) {
+        return new apiResponse(500,null,error.message);
+    }
+    
+   }
 
     // async assignStudentsToPCC(pccId, studentIds) {
     //     try {
@@ -65,6 +82,7 @@ class userModel {
     //         throw new apiError(500, "Error assigning students to PCC", [error.message]);
     //     }
     // }
+
 }
 
 export default userModel;

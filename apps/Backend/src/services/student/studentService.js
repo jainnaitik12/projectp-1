@@ -45,7 +45,7 @@ export default class StudentService {
             await this.userServices.deleteUserById(user.data._id);
             return new apiResponse(student.statusCode, null, student.message);
         }
-       
+        
            
         return new apiResponse(201, {
             user: user.data,
@@ -59,7 +59,12 @@ export default class StudentService {
     async updateProfile(id,studentData){
         try {
             const updatedProfile = await this.studentModel.updateProfile(id,studentData);
-            return new apiResponse(200, updatedProfile.data, "Profile updated successfully");
+             return new apiResponse(
+            updatedProfile.statusCode,
+            updatedProfile.data,
+            updatedProfile.message
+        );
+            // return new apiResponse(200, updatedProfile.data, "Profile updated successfully");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }
@@ -68,7 +73,12 @@ export default class StudentService {
    async getProfile(studentId){
     try {
         const profile = await this.studentModel.getProfile(studentId);
-        return new apiResponse(200, profile.data, "Profile fetched successfully");
+         return new apiResponse(
+            profile.statusCode,
+            profile.data,
+            profile.message
+        );
+        // return new apiResponse(200, profile.data, "Profile fetched successfully");
     } catch (error) {
         return new apiResponse(500, null, error.message);
     }
