@@ -22,6 +22,24 @@ export default class companyController {
         }
     }
 
+
+    async getCompany(req, res) {
+        const { id } = req.params;
+    
+        try {
+            const response = await this.CompanyService.getCompanyById(id);
+            if (!response) {
+                return res.status(404).json(new apiResponse(404, "Company not found", null));
+            }
+    
+            return res.status(200).json(new apiResponse(200, "Company fetched successfully", response));
+        } catch (error) {
+            return res.status(500).json(new apiError(500, error.message));
+        }
+    }
+
+
+
     async updateCompany(req, res) {
 
         const { id } = req.params;

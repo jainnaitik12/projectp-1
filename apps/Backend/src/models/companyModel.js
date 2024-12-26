@@ -23,6 +23,22 @@ export default class companyModel {
             return new apiResponse(500, error.message);
         }
     }
+
+    async findCompanyById(id) {
+        console.log("Model layer: findCompanyById called");
+    
+        try {
+            const company = await Company.findById(id).populate("JNFs"); 
+            if (!company) {
+                return null; 
+            }
+    
+            return company; 
+        } catch (error) {
+            return new apiResponse(500, error.message);
+        }
+    }
+
     async updateCompany(id, updates) {
         console.log("Company Model: updateCompany called");
         try {

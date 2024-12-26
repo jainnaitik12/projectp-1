@@ -42,6 +42,12 @@ export default class companyServices {
         return response;
     }
 
+    async getCompanyById(id) {
+        console.log("Service layer: getCompany called");
+        const response = await this.CompanyModel.findCompanyById(id);
+        return response;
+    }
+
     async updateCompany(id, updates) {
         console.log("Service layer: updateCompany called");
         const response = await this.CompanyModel.updateCompany(id, updates);
