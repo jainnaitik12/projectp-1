@@ -1,53 +1,70 @@
 import User from "../schema/userSchema.js";
 import apiResponse from "../utils/apiResponse.js";
+import apiError from "../utils/apiError.js";
 
-export default class userModel {
-    user = User
+class userModel {
     async createUser(userData) {
-
-     const existingUser = await this.user.findOne({ email: userData.email });
-            if (existingUser) {
-                return new apiResponse(400, null, "Email already exists");
-            }
-
-        const { email, password, user_role, avatar, superadmin, pcc, admin } = userData;
+        const { email, password, user_role, avatar, superadmin, tpo, pcc } = userData;
         try {
-            const createdUser = await this.user.create({
-                email: email,
-                password: password,
-                user_role: user_role,
-                avatar: avatar,
-                superadmin: superadmin,
-                pcc: pcc,
-                admin: admin
-            })
-            return new apiResponse(201, createdUser, "User created successfully");
+            const createdUser = await User.create({
+                email,
+                password,
+                user_role,
+                avatar,
+                superadmin,
+                tpo,
+                pcc
+            });
+            return new apiResponse(200, createdUser, "User created successfully");
         } catch (error) {
-            return new apiResponse(500,null,error.message);
+            throw new apiError(500, "Internal server error", [error.message]);
         }
     }
-   async deleteUserById(userId){
-    try {
-        const deletedUser  = await this.user.findByIdAndDelete(userId);
-        if (!deletedUser) {
-                return apiResponse(404, "User not found");
+
+    async findUserByEmail(email) {
+        try {
+            const user = await User.findOne({ email }).select('+password');
+            return user;
+        } catch (error) {
+            throw new apiError(500, "Error finding user by email", [error.message]);
+        }
+    }
+    async updateUser(userId, updateData) {
+        try {
+            const user = await User.findById(userId);
+            if (!user) {
+                throw new apiError(404, "User not found");
             }
-        return apiResponse(200,null,"User deleted successfully");
-    } catch (error) {
-        return apiResponse(500,null,error.message);
+            if (user.accountLocked) {
+                // Allow only certain fields to be updated if the account is locked
+                const allowedUpdates = ['avatar', 'password'];
+                const updates = Object.keys(updateData);
+                const isValidUpdate = updates.every(update => allowedUpdates.includes(update));
+                if (!isValidUpdate) {
+                    throw new apiError(403, "Account details are locked and cannot be updated");
+                }
+            }
+            Object.assign(user, updateData);
+            await user.save();
+            return new apiResponse(200, user, "User updated successfully");
+        } catch (error) {
+            throw new apiError(500, "Error updating user", [error.message]);
+        }
     }
-    
-   }
-   async addStudentIdToUser(userId,studentId){
-    try {
-        const updatedUser = await user.findByIdAndUpdate(
-                userId,
-            { Student: studentId },
-            { new: true }
-            );
-       return new apiResponse(200,updatedUser,"Student ID added to user successfully")
-    } catch (error) {
-        return new apiResponse(500,null,error.message)
-    }
-   }
+
+    // async assignStudentsToPCC(pccId, studentIds) {
+    //     try {
+    //         const pccUser = await User.findById(pccId);
+    //         if (!pccUser || pccUser.user_role !== 'student' || !pccUser.pcc) {
+    //             throw new apiError(404, "PCC user not found or not valid");
+    //         }
+    //         pccUser.pccAssignedStudents = studentIds;
+    //         await pccUser.save();
+    //         return new apiResponse(200, pccUser, "Students assigned to PCC successfully");
+    //     } catch (error) {
+    //         throw new apiError(500, "Error assigning students to PCC", [error.message]);
+    //     }
+    // }
 }
+
+export default userModel;

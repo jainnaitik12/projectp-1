@@ -1,55 +1,43 @@
 import Company  from "../schema/company/companySchema.js";
+import JNF from "../schema/company/jnfSchema.js";
 import apiResponse from "../utils/apiResponse.js";
 
 export default class companyModel {
     company = Company;
 
-    async createCompany(companyData) {
+    async createCompany(companyData, userId) {
         console.log("Company Model: createCompany called");
-        const {
-            company_name,
-            company_type,
-            domain,
-            job_profiles,
-            eligibility_criteria,
-            selection_process,
-            contact_person,
-            service_agreement,
-            expected_recruits,
-        } = companyData;
-
+        const {companyName, email, website} = companyData;
         try {
-            const createdCompany = await this.company.create({
-                company_name: company_name,
-                company_type: company_type,
-                domain: domain,
-                job_profiles: job_profiles,
-                eligibility_criteria: eligibility_criteria,
-                selection_process: selection_process,
-                contact_person: contact_person,
-                service_agreement: service_agreement,
-                expected_recruits: expected_recruits,
-            });
-
-            return new apiResponse(200, "Company created successfully", createdCompany);
-
+            const createdCompany = await Company.create(
+                {
+                    user: userId,
+                    companyName: companyName, 
+                    email: email, 
+                    website: website
+                } 
+            );
+            console.log(createdCompany);
+            return new apiResponse(201, "Company created successfully", createdCompany);
         } catch (error) {
-            console.error("Error in createCompany:", error.message);
-            return new apiResponse(500, "Internal server error");
+            return new apiResponse(500, error.message);
         }
     }
-
     async updateCompany(id, updates) {
         console.log("Company Model: updateCompany called");
         try {
-            const updatedCompany = await this.company.findByIdAndUpdate(id, updates, { new: true });
-            if (!updatedCompany) {
-                return new apiResponse(404, "Company not found");
-            }
-            return new apiResponse(200, "Company updated successfully", updatedCompany);
+            const updatedCompany = await Company.findByIdAndUpdate(id, updates, { new: true });
+            console.log(updatedCompany);
+
+            if (!updatedCompany)
+                { 
+                    console.log("not updated");
+                    return null;
+                }
+            return updatedCompany;
+
         } catch (error) {
-            console.error("Error in updateCompany:", error.message);
-            return new apiResponse(500, "Internal server error");
+            return new apiResponse(500, error.message);
         }
     }
 
@@ -65,6 +53,37 @@ export default class companyModel {
         } catch (error) {
             console.error("Error in deleteCompany:", error.message);
             return new apiResponse(500, "Internal server error");
+        }
+    }
+
+    async addJNFToCompany(companyId, jnfData) {
+        try {
+            const company = await Company.findById(companyId);
+            if (!company) {
+                return new apiResponse(404, "Company not found");
+            }
+
+            
+            const createdJNF = await JNF.create(jnfData);
+            company.JNFs.push(createdJNF._id);
+            await company.save();
+
+            return new apiResponse(200, "JNF added successfully", createdJNF);
+        } catch (error) {
+            return new apiResponse(500, error.message);
+        }
+    }
+
+
+    async getJNFsForCompany(companyId) {
+        try {
+            const company = await Company.findById(companyId).populate("JNFs");
+            if (!company) {
+                return new apiResponse(404, "Company not found");
+            }
+            return new apiResponse(200, "JNFs fetched successfully", company.JNFs);
+        } catch (error) {
+            return new apiResponse(500, error.message);
         }
     }
 }
