@@ -2,8 +2,8 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import ApplicationService from "../../services/student/applicationService.js";
 
 export default class ApplicationController {
-    constructor(applicationService) {
-        this.applicationService =  applicationService;
+    constructor() {
+        this.applicationService = new ApplicationService();
     }
 
     applyForJob = asyncHandler(async (req, res) => {
@@ -13,12 +13,12 @@ export default class ApplicationController {
         
         res.status(result.statusCode).json(result);
     });
-    getApplications = asyncHandler(async (req, res) => {
+    getApplicationsByStudent = asyncHandler(async (req, res) => {
         const { studentId } = req.params;
-        const applications = await this.applicationService.getApplications(studentId);
+        const applications = await this.applicationService.getApplicationsByStudent(studentId);
         res.status(applications.statusCode).json(applications);
     });
-   getEligibleJobs = asyncHandler(async (req, res) => {
+    getEligibleJobs = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const jobs = await this.applicationService.getEligibleJobs(id);
     res.status(jobs.statusCode).json(jobs);

@@ -1,11 +1,11 @@
 import StudentModel from "../../models/studentModel.js";
-import UserModel from "../../models/userModel.js";
+import UserServices from "../userServices.js"
 import apiResponse from "../../utils/apiResponse.js";
-import User from "../../schema/userSchema.js";
+
 export default class StudentService {
-    constructor(studentModel) {
-         this.studentModel = studentModel;
-        this.userModel = new UserModel();
+    constructor() {
+         this.studentModel = new StudentModel();
+         this.userServices = new UserServices();
     }
 //basic services for students
     async registerStudent(studentData) {
@@ -29,7 +29,7 @@ export default class StudentService {
             user_role: "student"
         };
         
-        const user = await this.userModel.createUser(userData);
+        const user = await this.userServices.createUser(userData);
         
         if (user.statusCode !== 201) {
             return new apiResponse(user.statusCode, null, user.message);
@@ -42,13 +42,11 @@ export default class StudentService {
         }, user.data._id);
 
         if (student.statusCode !== 201) {
-            await this.userModel.deleteUser(user.data._id);
+            await this.userServices.deleteUserById(user.data._id);
             return new apiResponse(student.statusCode, null, student.message);
         }
-        //updating in user schema for student id
-                await User.findByIdAndUpdate(user.data._id, {
-            Student: student.data._id
-        });
+       
+           
         return new apiResponse(201, {
             user: user.data,
             student: student.data
@@ -74,7 +72,15 @@ export default class StudentService {
     } catch (error) {
         return new apiResponse(500, null, error.message);
     }
-   }
-    //notification service
+}
+    async getStudentById(studentId){
+        try {
+            const student = await this.studentModel.getStudentById(studentId);
+            return new apiResponse(200, student.data, "Student found successfully");
+        } catch (error) {
+            return new apiResponse(500, null, error.message);
+        }
+    }
+   
 
 }

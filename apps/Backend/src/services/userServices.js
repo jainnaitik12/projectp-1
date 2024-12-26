@@ -1,12 +1,20 @@
-import userModel from "../models/userModel.js";
+import UserModel from "../models/userModel.js";
 
 class userServices {
     constructor() {
-        this.UserModel = new userModel;
+        this.userModel = new UserModel();
     }
 
     async createUser(userData) {
-        const response = await this.UserModel.createUser(userData);
+        const response = await this.userModel.createUser(userData);
+        return response;
+    }
+    async deleteUserById(userId){
+        const response = await this.userModel.deleteUserById(userId);
+        return response;
+    }
+    async addStudentIdToUser(userId,studentId){
+        const response = await this.userModel.addStudentIdToUser(userId,studentId);
         return response;
     }
     async authenticateUser(email, password) {
