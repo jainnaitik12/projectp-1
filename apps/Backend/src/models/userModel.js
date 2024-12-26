@@ -26,5 +26,28 @@ export default class userModel {
             return new apiResponse(500,null,error.message);
         }
     }
-
+   async deleteUserById(userId){
+    try {
+        const deletedUser  = await this.user.findByIdAndDelete(userId);
+        if (!deletedUser) {
+                return apiResponse(404, "User not found");
+            }
+        return apiResponse(200,null,"User deleted successfully");
+    } catch (error) {
+        return apiResponse(500,null,error.message);
+    }
+    
+   }
+   async addStudentIdToUser(userId,studentId){
+    try {
+        const updatedUser = await user.findByIdAndUpdate(
+                userId,
+            { Student: studentId },
+            { new: true }
+            );
+       return new apiResponse(200,updatedUser,"Student ID added to user successfully")
+    } catch (error) {
+        return new apiResponse(500,null,error.message)
+    }
+   }
 }
