@@ -17,6 +17,7 @@ export default class companyModel {
                     website: website
                 } 
             );
+            console.log(createdCompany);
             return new apiResponse(201, "Company created successfully", createdCompany);
         } catch (error) {
             return new apiResponse(500, error.message);
@@ -26,9 +27,14 @@ export default class companyModel {
         console.log("Company Model: updateCompany called");
         try {
             const updatedCompany = await Company.findByIdAndUpdate(id, updates, { new: true });
+            console.log(updatedCompany);
 
-            if (!updatedCompany) return new apiResponse(404, "Company not found");
-            return new apiResponse(200, "Company updated successfully", updatedCompany);
+            if (!updatedCompany)
+                { 
+                    console.log("not updated");
+                    return null;
+                }
+            return updatedCompany;
 
         } catch (error) {
             return new apiResponse(500, error.message);
