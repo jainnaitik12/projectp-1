@@ -31,9 +31,7 @@ const UserSchema = schema({
     Student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
-      required: function () {
-        return this.user_role === "student";
-      },
+      required: false,
     },
     lastLogin: { type: Date },
 
@@ -48,8 +46,9 @@ const UserSchema = schema({
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     try {
-        const salt = await bcrypt.genSalt(20);
-        this.password = bcrypt.hash(this.password, salt);
+        const salt = await bcrypt.genSalt(10);
+        //added await here to make sure the password is hashed before saving
+        this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
         next(error);

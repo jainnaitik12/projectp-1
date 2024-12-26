@@ -47,4 +47,16 @@ export default class StudentModel {
         return new apiResponse(500,null, "An error occurred while updating student profile");
       }
     }
+
+    async getProfile(studentId){
+      try {
+        const student = await this.student.findById(studentId);
+        if(!student){
+          return new apiResponse(404,null, "Student not found");
+        }
+        return new apiResponse(200,student,"Student found successfully");
+      } catch (error) {
+        return new apiResponse(500,null, "An error occurred while fetching student profile");
+      }
+    }
 }
