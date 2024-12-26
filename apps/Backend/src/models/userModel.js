@@ -4,7 +4,6 @@ import apiResponse from "../utils/apiResponse.js";
 export default class userModel {
     user = User
     async createUser(userData) {
-        console.log('User Model: createUser called');
         const { email, password, user_role, avatar, superadmin, pcc, admin } = userData;
         try {
             const createdUser = await this.user.create({
@@ -16,10 +15,10 @@ export default class userModel {
                 pcc: pcc,
                 admin: admin
             })
-            return new apiResponse(200, "User created successfully", createdUser);
+            return new apiResponse(200, createdUser, "User created successfully");
         } catch (error) {
             return new apiResponse(500, "Internal server error");
         }
     }
-    
+
 }

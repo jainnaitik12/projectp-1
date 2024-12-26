@@ -7,15 +7,11 @@ export default class userController {
         this.UserService = new userServices(userModel);
     }
     async createUser(req, res) {
-        console.log("Hi");
         const { email, password, superadmin, user_role, pcc, avatar, admin } = req.body;
         try {
-            console.log("hi1");
             const response = await this.UserService.createUser({
                 email, password, superadmin, user_role, pcc, avatar, admin
             });
-            console.log(response);
-            console.log("hi2");
             if (!response) {
                 return res.status(500).json(new apiError(500, "User not created"));
             }
