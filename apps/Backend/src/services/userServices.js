@@ -6,43 +6,44 @@ import sendVerificationEmail from "../utils/sendVerificationEmail.js";
 export default class userServices {
     constructor() {
         this.userModel = new userModel();
-    } 
-
-async registerUser(userData) {
-    try {
-        if (!userData.email || !userData.password || !userData.user_role) {
-            return new apiResponse(400, null, "Missing required fields");
-        }
-
-        const user = await this.userModel.createUser(userData);
-        if (user.statusCode !== 201) {
-            return user;
-        }
-
-        // const verificationToken = crypto.randomBytes(32).toString('hex');
-        // const verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-
-        // await this.userModel.updateUser(user.data._id, {
-        //     verificationToken,
-        //     verificationTokenExpiry
-        // });
-
-        // Send verification email here
-        // await sendVerificationEmail(userData.email, verificationToken);
-
-        const authToken = user.data.generateAccessToken();
-        const refreshToken = user.data.generateRefreshToken();
-        await this.userModel.updateTokens(user.data._id, authToken, refreshToken);
-
-        return new apiResponse(201, {
-            user: user.data,
-            authToken,
-            refreshToken
-        }, "User registered successfully. Please verify your email.");
-    } catch (error) {
-        return new apiResponse(500, null, error.message);
     }
-}
+
+    async registerUser(userData) {
+        try {
+            if (!userData.email || !userData.password || !userData.user_role) {
+                return new apiResponse(400, null, "Missing required fields");
+            }
+
+            const user = await this.userModel.createUser(userData);
+            if (user.statusCode !== 201) {
+                return user;
+            }
+
+            // const verificationToken = crypto.randomBytes(32).toString('hex');
+            // const verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+            // await this.userModel.updateUser(user.data._id, {
+            //     verificationToken,
+            //     verificationTokenExpiry
+            // });
+
+            // Send verification email here
+            // await sendVerificationEmail(userData.email, verificationToken);
+
+            const authToken = user.data.generateAccessToken();
+            const refreshToken = user.data.generateRefreshToken();
+            await this.userModel.updateTokens(user.data._id, authToken, refreshToken);
+
+            
+            return new apiResponse(201, {
+                    user: user.data,
+                    authToken,
+                    refreshToken
+                }, "User registered successfully. Please verify your email.");
+        } catch (error) {
+            return new apiResponse(500, null, error.message);
+        }
+    }
 
     async loginUser(email, password) {
         try {

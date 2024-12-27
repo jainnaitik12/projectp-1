@@ -10,7 +10,15 @@ export default class userController {
     register = asyncHandler(async (req, res) => {
         console.log("Request Body:", req.body);
         const user = await this.userService.registerUser(req.body);
-        res.status(200).json(new apiResponse(user.statusCode, user.data, user.message));
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+        res
+            .status(200)
+            .cookie("authToken", user.data.authToken, options)
+            .cookie("refreshToken", user.data.refreshToken, options)
+            .json(new apiResponse(user.statusCode, user.data, user.message));
     });
 
     verifyEmailByToken = asyncHandler(async (req, res) => {
@@ -18,11 +26,19 @@ export default class userController {
         const result = await this.userService.verifyEmailByToken(token);
         res.status(result.statusCode).json(result);
     });
-    
+
     login = asyncHandler(async (req, res) => {
         const { email, password } = req.body;
         const result = await this.userService.loginUser(email, password);
-        res.status(result.statusCode).json(result);
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+        res
+            .status(200)
+            .cookie("authToken", result.data.authToken, options)
+            .cookie("refreshToken", result.data.refreshToken, options)
+            .json(new apiResponse(result.statusCode, result.data, result.message));
     });
 
     logout = asyncHandler(async (req, res) => {
