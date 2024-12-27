@@ -1,28 +1,40 @@
 import { Router } from "express";
-import StudentModel from "../models/studentModel.js";
-import StudentController from "../controllers/student/studentController.js";
-import StudentService from "../services/student/studentService.js";
-import ApplicationController from "../controllers/student/applicationController.js";
-import ApplicationService from "../services/student/applicationService.js";
+
+import studentController from "../controllers/student/studentController.js";
+import studentService from "../services/student/studentService.js";
+import studentModel from "../models/studentModel.js";
+
+import applicationController from "../controllers/student/applicationController.js";
+import applicationService from "../services/student/applicationService.js";
+import applicationModel from "../models/applicationModel.js";
+
 const studentRouter = Router();
-const studentModel = new StudentModel();
-const studentService = new StudentService(studentModel);
-const applicationService = new ApplicationService();
-const applicationController = new ApplicationController(applicationService);
-const studentController = new StudentController(studentService);
+
+const StudentModel= new studentModel();
+const StudentService = new studentService(StudentModel);
+const StudentController = new studentController(StudentService);
+
+
+const ApplicationModel = new applicationModel();
+const ApplicationService = new applicationService(ApplicationModel);
+const ApplicationController = new applicationController(ApplicationService);
 
 //for student profile management
 //tested and working all 3
-studentRouter.post("/register", (req, res) => studentController.registerStudent(req, res));
-studentRouter.put("/profile/:id", (req, res) => studentController.updateProfile(req, res));
-studentRouter.get("/profile/:id",(req,res)=>studentController.getProfile(req,res));
+studentRouter.post("/register", (req, res) => StudentController.registerStudent(req, res));
+studentRouter.put("/profile/:id", (req, res) => StudentController.updateProfile(req, res));
+studentRouter.get("/profile/:id",(req,res)=>StudentController.getProfile(req,res));
+
+
 // for student job management
-studentRouter.get("/eligible-jobs/:id", (req, res) => applicationController.getEligibleJobs(req, res));
-studentRouter.get("/applications/:studentId", (req, res) => applicationController.getApplications(req, res));
-studentRouter.post("/apply/:studentId/:jobId", (req, res) => applicationController.applyForJob(req, res));
+studentRouter.get("/eligible-jobs/:id", (req, res) => ApplicationController.getEligibleJobs(req, res));
+studentRouter.get("/applications/:studentId", (req, res) => ApplicationController.getApplicationsByStudent(req, res));
+studentRouter.post("/apply/:studentId/:jobId", (req, res) => ApplicationController.applyForJob(req, res));
+
+
 //notifications for the student
 
 studentRouter.get("/notifications",(req,res)=>{
-    studentController.getNotifications(req,res);
+    StudentController.getNotifications(req,res);
 })
 export default studentRouter;

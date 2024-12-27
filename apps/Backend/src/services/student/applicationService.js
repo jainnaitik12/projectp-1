@@ -1,54 +1,43 @@
-import Application from "../../schema/general/applicationSchema.js";
-import Job from "../../schema/company/jobSchema.js";
-import Student from "../../schema/student/studentSchema.js";
+import ApplicationModel from "../../models/applicationModel.js";
 import apiResponse from "../../utils/apiResponse.js";
-
+import StudentService from "./studentService.js";
+import JobService from "../jobService.js"
 //for student : to get all jobs details and his applied jobs details
-export default class ApplicationService{
-   
+export default class ApplicationService {
+    constructor() {
+        this.studentServices = new StudentService();
+        this.jobServices = new JobService();
+        this.applicationModel = new ApplicationModel();
+    }
     async applyForJob(studentId, jobId) {
         try {
-            const student = await Student.findById(studentId);
-            if (!student) {
-                return new apiResponse(404, null, "Student not found");
-            }
-            
-            const job = await Job.findById(jobId);
-            if (!job) {
-                return new apiResponse(404, null, "Job not found");
-            }
-            const existingApplication = await Application.findOne({
-                student: studentId,
-                job: jobId
-            });
+            const student = await this.studentServices.getStudentById(studentId);
 
-            if (existingApplication) {
-                return new apiResponse(400, null, "Already applied for this job");
-            }
+            const job = await this.jobServices.getJobById(jobId);
 
-            const application = new Application({
-                student: studentId,
-                job: jobId,
-                status: "applied",
-                appliedAt: new Date()
-            });
-            
-            await application.save();
-            
+            const application = new this.applicationModel.applyForJob(studentId, jobId);
             return new apiResponse(201, application, "Application created successfully");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }
     }
-    async getApplications(studentId) {
+
+    async getApplicationsByStudent(studentId) {
         try {
-            const applications = await Application.find({ student: studentId });
-            return new apiResponse(200, applications, "Applications fetched successfully");
+             const student = await this.studentServices.getStudentById(studentId);
+        if (student.statusCode === 404) {
+            return new apiResponse(404, null, "Student not found");
+        }
+
+            const applications = await this.applicationModel.getApplicationsByStudent(studentId);
+            return applications;
         } catch (error) {
-            return new apiResponse(500, null, error.message);
+             console.error("Service error:", error);
+        return new apiResponse(500, null, "Error fetching applications");
+            // return new apiResponse(500, null, error.message);
         }
     }
-     async checkEligibility(student, job) {
+    async checkEligibility(student, job) {
         if (student.academics.cgpa < job.eligibility.minCGPA) {
             return false;
         }
@@ -66,18 +55,19 @@ export default class ApplicationService{
         }
         return true;
     }
-   async getEligibleJobs(studentId) {
+    async getEligibleJobs(studentId) {
         try {
-            const student = await Student.findById(studentId);
+            const student = await this.studentServices.getStudentById(studentId);
             if (!student) {
                 return new apiResponse(404, null, "Student not found");
             }
 
-            const allJobs = await Job.find({ status: "active" });
+            const allJobs = await this.jobServices.getAllJobs();
+
             const eligibleJobs = [];
- if (!allJobs || allJobs.length === 0) {
-            return new apiResponse(200, [], "No active jobs available");
-        }
+            if (!allJobs || allJobs.length === 0) {
+                return new apiResponse(200, [], "No active jobs available");
+            }
             for (const job of allJobs) {
                 const isEligible = await this.checkEligibility(student, job);
                 if (isEligible) {
