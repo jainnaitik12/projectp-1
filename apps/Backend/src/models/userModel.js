@@ -7,7 +7,12 @@ export default class userModel {
 
     async createUser(userData) {
         try {
-            const newUser = await this.user.create(userData);
+            const newUser = await this.user.create({
+                email: userData.email,
+                password: userData.password,
+                user_role: userData.user_role,
+                admin:userData.admin,
+            });
             newUser.password = undefined; // Don't return password in response
             return new ApiResponse(201, newUser, "User created successfully");
         } catch (error) {
@@ -24,22 +29,22 @@ export default class userModel {
                 verificationToken: token,
                 verificationTokenExpiry: { $gt: Date.now() }
             });
-    
+
             if (!user) {
                 return new ApiResponse(400, null, "Invalid or expired token");
             }
-    
+
             user.isVerified = true;
             user.verificationToken = undefined;
             user.verificationTokenExpiry = undefined;
             await user.save();
-    
+
             return new ApiResponse(200, null, "Email verified successfully");
         } catch (error) {
             return new ApiResponse(500, null, "An error occurred while verifying email");
         }
     }
-    
+
     async findUserByEmail(email) {
         try {
             const user = await this.user.findOne({ email }).select("+password");
@@ -96,7 +101,7 @@ export default class userModel {
 
             const updatedUser = await this.user.findByIdAndUpdate(
                 userId,
-                { 
+                {
                     password: hashedPassword,
                     authToken: "",
                     refreshToken: ""
@@ -118,7 +123,7 @@ export default class userModel {
         try {
             const updatedUser = await this.user.findByIdAndUpdate(
                 userId,
-                { 
+                {
                     authToken,
                     refreshToken,
                     lastLogin: new Date()
@@ -140,7 +145,7 @@ export default class userModel {
         try {
             const updatedUser = await this.user.findByIdAndUpdate(
                 userId,
-                { 
+                {
                     authToken: "",
                     refreshToken: ""
                 },

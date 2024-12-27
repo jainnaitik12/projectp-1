@@ -4,17 +4,17 @@ const { sign } = jsonwebtoken;
 import bcrypt from 'bcrypt';
 const Schema = _Schema;
 
-const UserSchema = schema({
+const UserSchema = Schema({
     email: {
         type: String,
-        required: [true,"Email is required"],
+        required: [true, "Email is required"],
         unique: true,
         lowercase: true,
         trim: true,
     },
     password: {
         type: String,
-        required: [true,"Password is required"],
+        required: [true, "Password is required"],
         select: false,
     },
     isVerified: { type: Boolean, default: false },
@@ -25,7 +25,7 @@ const UserSchema = schema({
 
     pcc: { type: Boolean, default: false },
 
-    user_role: { type: String, enum: ['admin', 'student', 'company'], required: [true,"User Role is required"] },
+    user_role: { type: String, enum: ['admin', 'student', 'company'], required: [true, "User Role is required"] },
 
     Student: {
         type: Schema.Types.ObjectId,
@@ -43,14 +43,14 @@ const UserSchema = schema({
         // required: function () {
         //     return this.user_role === "company";
         // },
-      
+
     },
     lastLogin: { type: Date },
     authToken: { type: String, default: "" },
     refreshToken: { type: String, default: "" },
     avatar: { type: String, default: "" },
     verificationToken: { type: String, select: false },//
-verificationTokenExpiry: { type: Date, select: false },//
+    verificationTokenExpiry: { type: Date, select: false },//
 
 }, { timestamps: true });
 

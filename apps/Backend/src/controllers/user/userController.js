@@ -1,5 +1,6 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import UserService from "../../services/userServices.js";
+import apiResponse from "../../utils/apiResponse.js";
 
 export default class userController {
     constructor() {
@@ -9,8 +10,9 @@ export default class userController {
     register = asyncHandler(async (req, res) => {
         console.log("Request Body:", req.body);
         const user = await this.userService.registerUser(req.body);
-        res.status(user.statusCode).json(user);
+        res.status(200).json(new apiResponse(user.statusCode, user.data, user.message));
     });
+
     verifyEmailByToken = asyncHandler(async (req, res) => {
         const { token } = req.body;
         const result = await this.userService.verifyEmailByToken(token);

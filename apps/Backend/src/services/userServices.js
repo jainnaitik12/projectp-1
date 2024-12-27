@@ -19,16 +19,16 @@ async registerUser(userData) {
             return user;
         }
 
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        const verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+        // const verificationToken = crypto.randomBytes(32).toString('hex');
+        // const verificationTokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
 
-        await this.userModel.updateUser(user.data._id, {
-            verificationToken,
-            verificationTokenExpiry
-        });
+        // await this.userModel.updateUser(user.data._id, {
+        //     verificationToken,
+        //     verificationTokenExpiry
+        // });
 
         // Send verification email here
-        await sendVerificationEmail(userData.email, verificationToken);
+        // await sendVerificationEmail(userData.email, verificationToken);
 
         const authToken = user.data.generateAccessToken();
         const refreshToken = user.data.generateRefreshToken();
@@ -43,7 +43,6 @@ async registerUser(userData) {
         return new apiResponse(500, null, error.message);
     }
 }
-
 
     async loginUser(email, password) {
         try {
