@@ -1,131 +1,79 @@
-import User from "../../schema/userSchema.js";
-import userModel from "../../models/userModel.js";
+import asyncHandler from "../../utils/asyncHandler.js";
+import UserService from "../../services/userServices.js";
 import apiResponse from "../../utils/apiResponse.js";
-import apiError from "../../utils/apiError.js";
-import { uploadOnCloudinary } from "../../utils/cloudinary.js";
-import jwt from 'jsonwebtoken';
 
-class userController {
+export default class userController {
     constructor() {
-        this.UserModel = new userModel();
+        this.userService = new UserService();
     }
 
-    async createUser(req, res) {
-        const { email, password, user_role, avatar, superadmin, tpo, pcc } = req.body;
-        try {
-            const response = await this.UserModel.createUser({
-                email, password, user_role, avatar, superadmin, tpo, pcc
-            });
-            if (!response) {
-                return res.status(500).json(new apiError(500, "User not created"));
-            }
-            return res.status(200).json(new apiResponse(200, response.data, "User created successfully"));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message, [error.stack]));
+    register = asyncHandler(async (req, res) => {
+        console.log("Request Body:", req.body);
+        const user = await this.userService.registerUser(req.body);
+        const options = {
+            httpOnly: true,
+            secure: true
         }
-    }
+        res
+            .status(200)
+            .cookie("authToken", user.data.authToken, options)
+            .cookie("refreshToken", user.data.refreshToken, options)
+            .json(new apiResponse(user.statusCode, user.data, user.message));
+    });
 
-    async loginUser(req, res) {
+    verifyEmailByToken = asyncHandler(async (req, res) => {
+        const { token } = req.body;
+        const result = await this.userService.verifyEmailByToken(token);
+        res.status(result.statusCode).json(result);
+    });
+
+    login = asyncHandler(async (req, res) => {
         const { email, password } = req.body;
-        try {
-            const { user, token } = await this.UserModel.authenticateUser(email, password);
-            const refreshToken = user.generateRefreshToken();
-            user.refreshToken = refreshToken;
-            await user.save();
-            return res.status(200).json(new apiResponse(200, { user, token, refreshToken }, "User logged in successfully"));
-        } catch (error) {
-            return res.status(401).json(new apiError(401, error.message, [error.stack]));
+        const result = await this.userService.loginUser(email, password);
+        const options = {
+            httpOnly: true,
+            secure: true
         }
-    }
+        res
+            .status(200)
+            .cookie("authToken", result.data.authToken, options)
+            .cookie("refreshToken", result.data.refreshToken, options)
+            .json(new apiResponse(result.statusCode, result.data, result.message));
+    });
 
-    async logoutUser(req, res) {
-        try {
-            await User.findByIdAndUpdate(req.user._id, { $unset: { refreshToken: 1 } }, { new: true });
-            const options = { httpOnly: true, secure: true };
-            return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new apiResponse(200, null, "User logged out"));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message, [error.stack]));
-        }
-    }
+    logout = asyncHandler(async (req, res) => {
+        const result = await this.userService.logoutUser(req.user._id);
+        res.status(result.statusCode).json(result);
+    });
 
-    async refreshAccessToken(req, res) {
-        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
-        if (!incomingRefreshToken) {
-            throw new apiError(401, "Unauthorized request");
-        }
-        try {
-            const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
-            const user = await User.findById(decodedToken?._id);
-            if (!user || incomingRefreshToken !== user?.refreshToken) {
-                throw new apiError(401, "Invalid refresh token");
-            }
-            const options = { httpOnly: true, secure: true };
-            const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
-            return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", newRefreshToken, options).json(new apiResponse(200, { accessToken, refreshToken: newRefreshToken }, "Access token refreshed"));
-        } catch (error) {
-            throw new apiError(401, error?.message || "Invalid refresh token");
-        }
-    }
+    refreshToken = asyncHandler(async (req, res) => {
+        const result = await this.userService.refreshToken(req.body.refreshToken);
+        res.status(result.statusCode).json(result);
+    });
 
-    async changeCurrentPassword(req, res, next) {
-        try {
-            const { oldPassword, newPassword } = req.body;
-            const user = await User.findById(req.user?._id);
-            const isPasswordCorrect = await user.comparePasswords(oldPassword);
-            if (!isPasswordCorrect) {
-                throw new apiError(400, "Invalid old password");
-            }
-            user.password = newPassword;
-            await user.save({ validateBeforeSave: false });
-            return res.status(200).json(new apiResponse(200, {}, "Password changed successfully"));
-        } catch (error) {
-            next(error);
-        }
-    }
+    getCurrentUser = asyncHandler(async (req, res) => {
+        const result = await this.userService.getCurrentUser(req.user._id);
+        res.status(result.statusCode).json(result);
+    });
 
-    async getCurrentUser(req, res) {
-        return res.status(200).json(new apiResponse(200, req.user, "Current user fetched successfully"));
-    }
+    forgotPassword = asyncHandler(async (req, res) => {
+        const result = await this.userService.forgotPassword(req.body.email);
+        res.status(result.statusCode).json(result);
+    });
 
-    async updateUserProfile(req, res) {
-        const { fullname, email } = req.body;
-        if (!(fullname || email)) {
-            throw new apiError(400, "Fullname or email is required");
-        }
-        try {
-            const response = await this.UserModel.updateUser(req.user._id, { fullname, email });
-            return res.status(200).json(new apiResponse(200, response.data, "Profile updated successfully"));
-        } catch (error) {
-            return res.status(error.statusCode || 500).json(new apiError(error.statusCode || 500, error.message, [error.stack]));
-        }
-    }
+    resetPassword = asyncHandler(async (req, res) => {
+        const { resetToken, newPassword } = req.body;
+        const result = await this.userService.resetPassword(resetToken, newPassword);
+        res.status(result.statusCode).json(result);
+    });
 
-    async updateUserAvatar(req, res) {
-        const avatarLocalPath = req.file?.path;
-        if (!avatarLocalPath) {
-            throw new apiError(400, "Avatar file is missing");
-        }
-        const avatar = await uploadOnCloudinary(avatarLocalPath);
-        if (!avatar.url) {
-            throw new apiError(400, "Error while uploading avatar");
-        }
-        try {
-            const response = await this.UserModel.updateUser(req.user._id, { avatar: avatar.url });
-            return res.status(200).json(new apiResponse(200, response.data, "Avatar updated successfully"));
-        } catch (error) {
-            return res.status(error.statusCode || 500).json(new apiError(error.statusCode || 500, error.message, [error.stack]));
-        }
-    }
+    updateProfile = asyncHandler(async (req, res) => {
+        const result = await this.userService.updateProfile(req.user._id, req.body);
+        res.status(result.statusCode).json(result);
+    });
 
-    async assignStudentsToPCC(req, res) {
-        const { pccId, studentIds } = req.body;
-        try {
-            const response = await this.UserModel.assignStudentsToPCC(pccId, studentIds);
-            return res.status(200).json(new apiResponse(200, response.data, "Students assigned to PCC successfully"));
-        } catch (error) {
-            return res.status(error.statusCode || 500).json(new apiError(error.statusCode || 500, error.message, [error.stack]));
-        }
-    }
+    verifyEmail = asyncHandler(async (req, res) => {
+        const result = await this.userService.verifyEmail(req.user._id);
+        res.status(result.statusCode).json(result);
+    });
 }
-
-export default userController;

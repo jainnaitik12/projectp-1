@@ -1,44 +1,23 @@
-import { Router } from "express";
-import userController from "../controllers/user/userController.js";
-import { protect } from "../middlewares/auth.middlewares.js";
+import { Router } from 'express';
+import UserController from '../controllers/user/userController.js';
+import auth from '../middlewares/auth.middlewares.js';
 
-const userRouter = Router();
-const UserController = new userController();
+const router = Router();
+const userController = new UserController();
 
-userRouter.post("/signup", (req, res) => {
-    UserController.createUser(req, res);
-});
+// Public routes
+router.post('/register', userController.register);
+router.post('/login', userController.login);
+router.post('/forgot-password', userController.forgotPassword);
+router.post('/reset-password', userController.resetPassword);
+router.post('/refresh-token', userController.refreshToken);
+router.post('/verify-email', userController.verifyEmailByToken);
 
-userRouter.post("/login", (req, res) => {
-    UserController.loginUser(req, res);
-});
+// Protected routes
+router.use(auth); // Apply authentication middleware to all routes below
+router.get('/me', userController.getCurrentUser);
+router.post('/logout', userController.logout);
+router.patch('/profile', userController.updateProfile);
+router.post('/verify-email', userController.verifyEmail);
 
-userRouter.post("/logout", protect, (req, res) => {
-    UserController.logoutUser(req, res);
-});
-
-userRouter.post("/refresh-token", (req, res) => {
-    UserController.refreshAccessToken(req, res);
-});
-
-userRouter.post("/change-password", protect, (req, res, next) => {
-    UserController.changeCurrentPassword(req, res, next);
-});
-
-userRouter.get("/me", protect, (req, res) => {
-    UserController.getCurrentUser(req, res);
-});
-
-userRouter.put("/profile", protect, (req, res) => {
-    UserController.updateUserProfile(req, res);
-});
-
-userRouter.put("/avatar", protect, (req, res) => {
-    UserController.updateUserAvatar(req, res);
-});
-
-// userRouter.post("/assign-pcc", protect, (req, res) => { // Assuming only admin can access this route
-//     UserController.assignStudentsToPCC(req, res);
-// });
-
-export default userRouter;
+export default router;

@@ -21,43 +21,44 @@ const StudentSchema = new Schema({
 
   // Locked fields with verification
   personalInfo: {
+    isLocked: { type: Boolean, default: false },
     name: { 
       type: String, 
       required: true,
-      isLocked: { type: Boolean, default: false }
     },
     rollNumber: { 
-      type: String, 
+      type: Number, 
       required: true,
-      isLocked: { type: Boolean, default: false }
+      unique:true,
+     
     },
     department: { 
       type: String, 
       required: true,
-      isLocked: { type: Boolean, default: false }
+      
     },
     batch: { 
       type: Number, 
       required: true,
-      isLocked: { type: Boolean, default: false }
+    
     }
   },
 
   academics: {
+    isLocked: { type: Boolean, default: false },
     cgpa: { 
       type: Number, 
       required: true,
-      isLocked: { type: Boolean, default: false }
     },
     tenthMarks: {
       type: Number,
       required: true,
-      isLocked: { type: Boolean, default: false }
+      
     },
     twelfthMarks: {
       type: Number,
       required: true,
-      isLocked: { type: Boolean, default: false }
+      
     }
   },
 
@@ -115,22 +116,22 @@ applications: [{
 
 
 //middleware to prevent modification of locked fields
-StudentSchema.pre('save', async function(next) {
-  // Check if locked fields are modified
-  const isPersonalLocked = this.personalInfo?.isLocked;
-  const isAcademicsLocked = this.academics?.isLocked;
+StudentSchema.pre('save', function(next) {
+    // Check if personal info is locked and modified
+    if (this.personalInfo?.isLocked && this.isModified('personalInfo')) {
+        const error = new Error('Cannot modify locked personal information');
+        error.statusCode = 403;
+        return next(error);
+    }
 
-  // Check personal info
-  if (isPersonalLocked && this.isModified('personalInfo')) {
-    return next(new Error('Cannot modify locked personal information'));
-  }
+    // Check if academics is locked and modified
+    if (this.academics?.isLocked && this.isModified('academics')) {
+        const error = new Error('Cannot modify locked academic information');
+        error.statusCode = 403;
+        return next(error);
+    }
 
-  // Check academics
-  if (isAcademicsLocked && this.isModified('academics')) {
-    return next(new Error('Cannot modify locked academic information'));
-  }
-
-  next();
+    next();
 });
 
 const Student = model('Student', StudentSchema);

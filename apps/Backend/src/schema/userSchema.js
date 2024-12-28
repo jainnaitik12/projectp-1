@@ -2,61 +2,66 @@ import { Schema as _Schema, model, mongoose } from "mongoose";
 import jsonwebtoken from 'jsonwebtoken';
 const { sign } = jsonwebtoken;
 import bcrypt from 'bcrypt';
-const schema = _Schema;
+const Schema = _Schema;
 
-const UserSchema = schema({
+const UserSchema = Schema({
     email: {
         type: String,
-        required: true,
+        required: [true, "Email is required"],
         unique: true,
         lowercase: true,
         trim: true,
     },
     password: {
         type: String,
-        required: true,
+        required: [true, "Password is required"],
         select: false,
     },
     isVerified: { type: Boolean, default: false },
 
     superadmin: { type: Boolean, default: false },
-    
+
     tpo: { type: Boolean, default: false },
 
     pcc: { type: Boolean, default: false },
 
-    user_role: { type: String, enum: ['admin', 'student', 'company'], required: true },
+    user_role: { type: String, enum: ['admin', 'student', 'company'], required: [true, "User Role is required"] },
 
     Student: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Student",
-        required: function () {
-            return this.user_role === "student";
-        },
+        required: false,
+        // required: function () {
+        //     return this.user_role === "company";
+        // },
     },
 
     Company: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Company",
-        required: function () {
-            return this.user_role === "company";
-        },
+        required: false,
+        // required: function () {
+        //     return this.user_role === "company";
+        // },
+
     },
     lastLogin: { type: Date },
     authToken: { type: String, default: "" },
     refreshToken: { type: String, default: "" },
     avatar: { type: String, default: "" },
-    // accountLocked: { type: Boolean, default: false },
-    // pccAssignedStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }]
+    verificationToken: { type: String, select: false },//
+    verificationTokenExpiry: { type: Date, select: false },//
+
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     try {
-        const salt = await bcrypt.genSalt(20);
+        const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
+        console.error("Error in pre-save hook:", error); // Log the error
         next(error);
     }
 });
