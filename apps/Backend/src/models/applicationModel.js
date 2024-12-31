@@ -5,7 +5,6 @@ export default class ApplicationModel{
     
    async applyForJob(studentId,jobId){
     try {
-
         const existingApplication = await this.application.findOne({
             student: studentId,
                 job: jobId

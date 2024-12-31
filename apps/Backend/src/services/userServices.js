@@ -2,7 +2,7 @@ import userModel from "../models/userModel.js";
 import apiResponse from "../utils/apiResponse.js";
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import sendVerificationEmail from "../utils/sendVerificationEmail.js";
+import asyncHandler from "../utils/asyncHandler.js";
 export default class userServices {
     constructor() {
         this.userModel = new userModel();
@@ -34,12 +34,12 @@ export default class userServices {
             const refreshToken = user.data.generateRefreshToken();
             await this.userModel.updateTokens(user.data._id, authToken, refreshToken);
 
-            
+
             return new apiResponse(201, {
-                    user: user.data,
-                    authToken,
-                    refreshToken
-                }, "User registered successfully. Please verify your email.");
+                user: user.data,
+                authToken,
+                refreshToken
+            }, "User registered successfully. Please verify your email.");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }
@@ -51,18 +51,18 @@ export default class userServices {
             if (user.statusCode !== 200) {
                 return new apiResponse(401, null, "Invalid credentials");
             }
-
             const isPasswordValid = await user.data.comparePasswords(password);
             if (!isPasswordValid) {
                 return new apiResponse(401, null, "Invalid credentials");
             }
 
-            if (!user.data.isVerified) {
-                return new apiResponse(403, null, "Please verify your email first");
-            }
+            // if (!user.data.isVerified) {
+            //     return new apiResponse(403, null, "Please verify your email first");
+            // }
 
             const authToken = user.data.generateAccessToken();
             const refreshToken = user.data.generateRefreshToken();
+
             await this.userModel.updateTokens(user.data._id, authToken, refreshToken);
 
             user.data.password = undefined;
@@ -180,4 +180,21 @@ export default class userServices {
             return new apiResponse(500, null, error.message);
         }
     }
+
+    demoteAdmin = asyncHandler(async (userId) => {
+        return await this.userModel.demoteAdmin(userId);
+    });
+
+    promoteAdmin = asyncHandler(async (userId, userRoleAsAdmin) => {
+        return await this.userModel.promoteAdmin(userId, userRoleAsAdmin);
+    });
+
+    verifyandLockUser = asyncHandler(async (userId) => {
+        return await this.userModel.verifyandLockUser(userId);
+    });
+
+    unlockUserProfile = asyncHandler(async (userId, adminId) => {
+        return await this.userModel.unlockUserProfile(userId, adminId);
+    })
+
 }
