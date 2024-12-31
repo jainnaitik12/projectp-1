@@ -31,4 +31,5 @@ async verifyAndLockStudent(studentId, adminId) {
     return new apiResponse(500, null, error.message);
   }
 }
+
 }
