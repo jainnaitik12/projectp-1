@@ -5,60 +5,29 @@ import bcrypt from 'bcrypt';
 const Schema = _Schema;
 
 const UserSchema = Schema({
-    email: {
-        type: String,
-        required: [true, "Email is required"],
-        unique: true,
-        lowercase: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: [true, "Password is required"],
-        select: false,
-    },
+    email: { type: String, required: [true, "Email is required"], unique: true, lowercase: true, trim: true },
+    password: { type: String, required: [true, "Password is required"], select: false },
     isVerified: { type: Boolean, default: false },
-
-    superadmin: { type: Boolean, default: false },
-
-    tpo: { type: Boolean, default: false },
-
-    pcc: { type: Boolean, default: false },
-
+    profileStatus: { type: String, enum: ['unlocked', 'locked'], default: 'unlocked'},
+    unlockedBy: { type: Schema.Types.ObjectId, ref: "User" },
+    verifiedBy: { type: Schema.Types.ObjectId, ref: "User", required: false },
+    userRoleAsAdmin: { type: String, enum: ['tpo', 'admin', 'pcc', 'superadmin', 'none'], required: false },
     user_role: { type: String, enum: ['admin', 'student', 'company'], required: [true, "User Role is required"] },
-
-    Student: {
-        type: Schema.Types.ObjectId,
-        ref: "Student",
-        required: false,
-        // required: function () {
-        //     return this.user_role === "company";
-        // },
-    },
-
-    Company: {
-        type: Schema.Types.ObjectId,
-        ref: "Company",
-        required: false,
-        // required: function () {
-        //     return this.user_role === "company";
-        // },
-
-    },
+    Student: { type: Schema.Types.ObjectId, ref: "Student", required: false },
+    Company: { type: Schema.Types.ObjectId, ref: "Company", required: false },
     lastLogin: { type: Date },
     authToken: { type: String, default: "" },
     refreshToken: { type: String, default: "" },
     avatar: { type: String, default: "" },
-    verificationToken: { type: String, select: false },//
-    verificationTokenExpiry: { type: Date, select: false },//
-
+    verificationToken: { type: String, select: false },
+    verificationTokenExpiry: { type: Date, select: false },
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     try {
         const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        this.password = bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
         console.error("Error in pre-save hook:", error); // Log the error

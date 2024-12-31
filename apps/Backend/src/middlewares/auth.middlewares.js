@@ -15,7 +15,7 @@ const auth = asyncHandler(async (req, res, next) => {
 
     try {
         // Get token from Bearer token
-        const token = authHeader.split(' ')[1];
+        const token = req.cookies.authToken || authHeader.split(' ')[1];
 
         // Verify token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -66,8 +66,8 @@ export const authorizeRoles = (...roles) => {
             return res
                 .status(403)
                 .json(new apiResponse(
-                    403, 
-                    null, 
+                    403,
+                    null,
                     `Role: ${req.user.user_role} is not allowed to access this resource`
                 ));
         }

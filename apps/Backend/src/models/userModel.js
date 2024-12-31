@@ -1,17 +1,18 @@
 import User from "../schema/userSchema.js";
 import ApiResponse from "../utils/apiResponse.js";
 import bcrypt from 'bcrypt';
+import asyncHandler from "../utils/asyncHandler.js";
+import apiResponse from "../utils/apiResponse.js";
 
 export default class userModel {
     user = User;
-
     async createUser(userData) {
         try {
             const newUser = await this.user.create({
                 email: userData.email,
                 password: userData.password,
                 user_role: userData.user_role,
-                admin:userData.admin,
+                admin: userData.admin,
             });
             newUser.password = undefined; // Don't return password in response
             return new ApiResponse(201, newUser, "User created successfully");
@@ -192,4 +193,55 @@ export default class userModel {
             return new ApiResponse(500, null, "An error occurred while deleting user");
         }
     }
+    
+    promoteAdmin = asyncHandler(async (userId, userRoleAsAdmin) => {
+        const updatedUser = await this.user.findByIdAndUpdate(
+            userId,
+            { userRoleAsAdmin },
+            { new: true }
+        );
+        if (!updatedUser) {
+            return new ApiResponse(404, null, "User not found");
+        }
+        return new ApiResponse(200, updatedUser, "User promoted to admin successfully");
+    });
+
+
+    demoteAdmin = asyncHandler(async (userId) => {
+        const updatedUser = await this.user.findByIdAndUpdate(
+            userId,
+            { userRoleAsAdmin: 'none' },
+            { new: true }
+        );
+        if (!updatedUser) {
+            return new ApiResponse(404, null, "User not found");
+        }
+        return new ApiResponse(200, updatedUser, "User demoted from admin successfully");
+    });
+
+    verifyandLockUser = asyncHandler(async (userId, adminId) => {
+        const updatedUser = await this.user.findByIdAndUpdate(
+            userId,
+            { isVerified: true, profileStatus: 'locked', verifiedBy: adminId },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return new ApiResponse(404, null, "User not found");
+        }
+
+        return new ApiResponse(200, updatedUser, "User verified successfully");
+    });
+
+    unlockUserProfile = asyncHandler(async (userId, adminId) => {
+        const updatedUser = await this.user.findByIdAndUpdate(
+            userId,
+            { profileStatus: 'unlocked', unlockedBy: adminId },
+            { new: true }
+        )
+        if (!updatedUser) {
+            return new apiResponse(404, null, "User Not found");
+        }
+        return new apiResponse(200, updatedUser, "User profile Unlocked");
+    })
 }

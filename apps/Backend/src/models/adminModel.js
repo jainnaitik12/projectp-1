@@ -1,29 +1,22 @@
 import Admin from "../schema/adminSchema";
 import User from "../schema/userSchema";
 import apiResponse from "../utils/apiResponse";
-
+import asyncHandler from "../utils/asyncHandler.js"
 export default class adminModel {
     admin = Admin;
-    //done
-    async editAdmin(adminData, id) {
-        try {
-            const { updates } = adminData;
-            const updatedAdmin = await this.admin.findByIdAndUpdate(id, updates, { new: true });
-            if (!updatedAdmin) {
-                return apiResponse(404, "Admin not found");
-            }
-            return apiResponse(200, "Admin updated successfully", updatedAdmin);
-        } catch (error) {
-            return apiResponse(500, "An error occurred while updating admin", { error: error.message });
+
+    editAdmin = asyncHandler(async (adminData, id) => {
+        const { updates } = adminData;
+        const updatedAdmin = await this.admin.findByIdAndUpdate(id, updates, { new: true });
+        if (!updatedAdmin) {
+            return apiResponse(404, "Admin not found");
         }
-    }
-    //done
+        return apiResponse(200, "Admin updated successfully", updatedAdmin);
+    })
 
-    async createAdmin(adminData, id) {
-        
+    createAdmin = asyncHandler(async (adminData, id) => {
         try {
-            const { permissions, userData } = adminData;
-
+            const {permissions} = adminData;
             const newAdmin = await this.admin.create({
                 userid: id,
                 permissions: permissions,
@@ -33,17 +26,14 @@ export default class adminModel {
         } catch (error) {
             return apiResponse(500, "An error occurred while creating admin", { error: error.message });
         }
-    }
-    //done
-    async deleteAdminById(id) {
-        try {
-            const deletedAdmin = await this.admin.findByIdAndDelete(id);
-            if (!deletedAdmin) {
-                return apiResponse(404, "Admin not found");
-            }
-            return apiResponse(200, "Admin deleted successfully");
-        } catch (error) {
-            return apiResponse(500, "An error occurred while deleting admin", { error: error.message });
+    })
+
+    deleteAdminById = asyncHandler(async (id) => {
+        const deletedAdmin = await this.admin.findByIdAndDelete(id);
+        if (!deletedAdmin) {
+            return apiResponse(404, "Admin not found");
         }
-    }
+        return apiResponse(200, "Admin deleted successfully");
+    })
+
 }
