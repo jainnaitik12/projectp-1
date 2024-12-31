@@ -196,5 +196,8 @@ export default class userServices {
     unlockUserProfile = asyncHandler(async (userId, adminId) => {
         return await this.userModel.unlockUserProfile(userId, adminId);
     })
+    deleteUser = asyncHandler(async(userId)=>{
+        return await this.userModel.deleteUser(userId);
+    })
 
 }
