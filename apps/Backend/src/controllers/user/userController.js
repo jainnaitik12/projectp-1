@@ -8,7 +8,6 @@ export default class userController {
     }
 
     register = asyncHandler(async (req, res) => {
-        console.log("Request Body:", req.body);
         const user = await this.userService.registerUser(req.body);
         const options = {
             httpOnly: true,
@@ -43,7 +42,15 @@ export default class userController {
 
     logout = asyncHandler(async (req, res) => {
         const result = await this.userService.logoutUser(req.user._id);
-        res.status(result.statusCode).json(result);
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+        res
+            .status(200)
+            .clearCookie("authToken", options)
+            .clearCookie("refreshToken", options)
+            .json(result);
     });
 
     refreshToken = asyncHandler(async (req, res) => {
