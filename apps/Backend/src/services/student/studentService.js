@@ -8,54 +8,63 @@ export default class StudentService {
          this.userServices = new UserServices();
     }
 //basic services for students
-    async registerStudent(studentData) {
+async registerStudent(studentData) {
     try {
-        // Validate required fields
-        if (!studentData.email || 
-            !studentData.password || 
-            !studentData.personalInfo?.rollNumber || 
-            !studentData.personalInfo?.name ||
-            !studentData.personalInfo?.department ||
-            !studentData.personalInfo?.batch ||
-            !studentData.academics?.cgpa ||
-            !studentData.academics?.tenthMarks ||
-            !studentData.academics?.twelfthMarks) {
-            return new apiResponse(400, null, "Missing required fields");
-        }
+      // Validate required fields
+      if (
+        !studentData.email ||
+        !studentData.password ||
+        !studentData.personalInfo?.rollNumber ||
+        !studentData.personalInfo?.name ||
+        !studentData.personalInfo?.department ||
+        !studentData.personalInfo?.batch ||
+        !studentData.academics?.cgpa ||
+        !studentData.academics?.tenthMarks ||
+        !studentData.academics?.twelfthMarks
+      ) {
+        return new apiResponse(400, null, "Missing required fields");
+      }
 
-        const userData = {
-            email: studentData.email,
-            password: studentData.password,
-            user_role: "student"
-        };
-        
-        const user = await this.userServices.createUser(userData);
-        
-        if (user.statusCode !== 201) {
-            return new apiResponse(user.statusCode, null, user.message);
-        }
+      const userData = {
+        email: studentData.email,
+        password: studentData.password,
+        user_role: "student",
+      };
 
-        // Create student profile with existing structure
-        const student = await this.studentModel.registerStudent({
-            personalInfo: studentData.personalInfo,
-            academics: studentData.academics
-        }, user.data._id);
+      const user = await this.userServices.registerUser(userData);
 
-        if (student.statusCode !== 201) {
-            await this.userServices.deleteUserById(user.data._id);
-            return new apiResponse(student.statusCode, null, student.message);
-        }
-        
-           
-        return new apiResponse(201, {
-            user: user.data,
-            student: student.data
-        }, "Student registered successfully");
+      if (user.statusCode !== 201) {
+        return new apiResponse(user.statusCode, null, user.message);
+      }
 
+      // Create student profile with existing structure
+      const userId = user.data.user._id;
+      const student = await this.studentModel.registerStudent(
+        {
+          personalInfo: studentData.personalInfo,
+          academics: studentData.academics,
+        },
+        userId
+      );
+
+      if (student.statusCode !== 201) {
+        await this.userServices.deleteUser(userId);
+        return new apiResponse(student.statusCode, null, student.message);
+      }
+
+      return new apiResponse(
+        201,
+        {
+          user: user.data,
+          student: student.data,
+        },
+        "Student registered successfully"
+      );
     } catch (error) {
-        return new apiResponse(500, null, error.message);
+      console.log("Registration error", error);
+      return new apiResponse(500, null, error.message);
     }
-}
+  }
     async updateProfile(id,studentData){
         try {
             const updatedProfile = await this.studentModel.updateProfile(id,studentData);

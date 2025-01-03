@@ -16,7 +16,7 @@ router.use("/admin", adminRouter); //uday
 router.use("/event", eventRouter); //shivam
 router.use("/company", companyRouter); //akansha
 router.use("/jobroutes", jobRoutes);
-router.use("/application")
+// router.use("/application")
 router.use("/student", studentRouter); //naveen
 router.use("/job",jobRoutes);//akarshit
 
