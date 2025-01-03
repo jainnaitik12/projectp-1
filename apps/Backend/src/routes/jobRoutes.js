@@ -2,7 +2,7 @@ import { Router } from "express";
 import JobModel from "../models/jobModel.js";
 import JobService from "../services/jobService.js";
 import JobController from "../controllers/company/jobController.js";
-import { auth, authorizeRoles } from '../middlewares/authMiddleware.js';
+import { auth, authorizeRoles } from "../middlewares/auth.middlewares.js";
 
 const jobRouter = Router();
 const jobModel = new JobModel();
