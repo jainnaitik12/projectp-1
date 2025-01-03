@@ -4,17 +4,93 @@ import apiResponse from "../utils/apiResponse.js";
 
 export default class jobModel {
     job = Job;
+    Jnf = JNF;
+
+    async getAllJobs() {
+        console.log("Job Model: getAllJobs called");
+        try {
+            const jobs = await this.job.find();
+            if (!jobs || jobs.length === 0) {
+                return new apiResponse(404, null, "No jobs found");
+            }
+            return new apiResponse(200, jobs, "Jobs retrieved successfully");
+        } catch (error) {
+            console.error("Error in getAllJobs:", error.message);
+            return new apiResponse(500, null, error.message);
+        }
+    }
+
+    async createJob(jnfId, createdBy) {
+        console.log("Job Model: createJob called",jnfId);
+        try {
+          const jnf = await this.Jnf.findById(jnfId);
+          if (!jnf) {
+            return new apiResponse(404, jnf, "JNF with ID ${jnfId} not found");
+          }
+    
+          const { eligibleBranches, jobProfiles, eligibilityCriteria } = jnf;
+
+        // Create and save each job one by one
+        for (const profile of jobProfiles) {
+            const {
+                course,
+                designation,
+                jobDescription,
+                ctc,
+                takeHome,
+                perks,
+                trainingPeriod,
+                placeOfPosting
+            } = profile;
+
+            let departments = [];
+            if (course === "B.Tech") {
+                departments = eligibleBranches.btech
+                    .filter(branch => branch.eligible)
+                    .map(branch => branch.name);
+            } else if (course === "M.Tech") {
+                departments = eligibleBranches.mtech
+                    .filter(department => department.eligible)
+                    .map(department => department.department);
+            }
+
+            const newJob = await this.job.create({
+                course,
+                departments, 
+                designation,
+                jobDescription,
+                eligibilityCriteria,
+                ctc,
+                takeHome,
+                perks,
+                trainingPeriod,
+                placeOfPosting,
+                jnf: jnfId, 
+                createdBy, 
+                status: 'pendingAdminApproval', 
+            });
+            console.log(newJob);
+            }
+    
+            new apiResponse(200, null, "Job updated successfully");
+        }
+         catch (error) {
+          console.error('Error creating job from JNF:', error);
+          return new apiResponse(500, null, error.message);
+        }
+      }
+
 
     async getJobById(jobid) {
         console.log("Job Model: getJobById called");
     
         try {
-            const job = await this.job.findById(jobid).populate("JNFs"); 
+            const job = await this.job.findById(jobid); 
             if (!job) {
                 return null; 
             }
     
-            return job; 
+            return new apiResponse(200, job, "Job retrieved successfully");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }
@@ -31,7 +107,7 @@ export default class jobModel {
                     console.log("not updated");
                     return null;
                 }
-            return updatedJob;
+            return new apiResponse(200, updatedJob, "Job updated successfully");
 
         } catch (error) {
             return new apiResponse(500, null, error.message);
@@ -66,7 +142,7 @@ export default class jobModel {
                 return null;
             }
     
-            return updatedJob;
+            return new apiResponse(200, updatedJob, "Job activated successfully");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }
@@ -85,7 +161,7 @@ export default class jobModel {
                 return null;
             }
     
-            return updatedJob;
+            return new apiResponse(200, updatedJob, "Job closed successfully");
         } catch (error) {
             return new apiResponse(500, null, error.message);
         }

@@ -5,48 +5,51 @@ import jobModel from "../../models/jobModel.js";
 export default class jobController {
     constructor() {
         this.JobService = new jobService(jobModel);
+        this.userModel = new UserModel();
     }
 
     async getAllJobs(req, res) {
         try {
             const response = await this.JobService.getAllJobs();
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
     async createJob(req, res) {
-        const { jnfid } = req.params;
+        const { id } = req.params;
+
+        const createdBy = req.user._id; 
         try {
-            const response = await this.JobService.createJob(jnfid, req.body);
+            const response = await this.JobService.createJob(id, createdBy);
 
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
     async getJobById(req, res) {
-        const { jobid } = req.params;
+        const { id } = req.params;
     
         try {
-            const response = await this.JobService.getJobById(jobid);
+            const response = await this.JobService.getJobById(id);
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -54,67 +57,68 @@ export default class jobController {
 
     async updateJob(req, res) {
 
-        const { jobid } = req.params;
+        const { id } = req.params;
         const updates = req.body;
 
         try {
-            const response = await this.JobService.updateJob(jobid, updates);
+            const response = await this.JobService.updateJob(id, updates);
 
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
     async deleteJob(req, res) {
-        const { jobid } = req.params;
+        console.log("Controller later : deleteJob");
+        const { id } = req.params;
 
         try {
-            const response = await this.JobService.deleteJob(jobid);
+            const response = await this.JobService.deleteJob(id);
 
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
     async activateJob(req, res) {
-        const { jobid } = req.params;
+        const { id } = req.params;
 
         try {
-            const response = await this.JobService.activateJob(jobid);
+            const response = await this.JobService.activateJob(id);
 
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 
     async closeJob(req, res) {
-        const { jobid } = req.params;
+        const { id } = req.params;
 
         try {
-            const response = await this.JobService.closeJob(jobid);
+            const response = await this.JobService.closeJob(id);
 
             if(!response) {
-                return new apiResponse(404, null, "Not Found");
+                new apiResponse(404, null, "Not Found");
             }
-            return response;
+            res.status(200).json(response);
         }
         catch (error) {
-            return new apiResponse(500, null, error.message);
+            new apiResponse(500, null, error.message);
         }
     }
 }

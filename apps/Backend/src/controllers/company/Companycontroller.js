@@ -1,6 +1,5 @@
 import companyServices from "../../services/companyServices.js";
 import apiResponse from "../../utils/apiResponse.js";
-import apiError from "../../utils/apiError.js";
 import companyModel from "../../models/companyModel.js";
 
 export default class companyController {
@@ -75,10 +74,10 @@ export default class companyController {
     }
 
     async addJNFToCompany(req, res) {
-        const { companyId } = req.params;
+        const { id } = req.params;
         const jnfData = req.body;
         try {
-            const response = await this.CompanyService.addJNFToCompany(companyId, jnfData);
+            const response = await this.CompanyService.addJNFToCompany(id, jnfData);
             if(!response) {
                 new apiResponse(404, null, "Not Found");
             }
@@ -90,9 +89,9 @@ export default class companyController {
     }
 
     async getJNFsForCompany(req, res) {
-        const { companyId } = req.params;
+        const { id } = req.params;
         try {
-            const response = await this.CompanyService.getJNFsForCompany(companyId);
+            const response = await this.CompanyService.getJNFsForCompany(id);
             if(!response) {
                 new apiResponse(404, null, "Not Found");
             }

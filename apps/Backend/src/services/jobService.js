@@ -17,10 +17,10 @@ export default class JobService{
             }
         }
 
-        async createJob(jnfId, additionDetails) {
+        async createJob(jnfId, createdBy) {
             console.log("Service layer: createJobFromJNF called");
             try {
-                const response = await this.JobModel.createJob(jnfId, additionDetails);
+                const response = await this.JobModel.createJob(jnfId, createdBy);
 
                 return new apiResponse(200, response, "Job created successfully");
             } catch (error) {
@@ -52,7 +52,7 @@ export default class JobService{
             }
         }
     
-        async deleteCompany(jobid) {
+        async deleteJob(jobid) {
             console.log("Service layer: deleteJob called");
             try {
                 const response = await this.JobModel.deleteJob(jobid);
