@@ -1,15 +1,31 @@
-import companyServices from "../../services/companyServices.js";
+import jobService from "../../services/jobService.js";
 import apiResponse from "../../utils/apiResponse.js";
-import companyModel from "../../models/companyModel.js";
+import jobModel from "../../models/jobModel.js";
 
-export default class companyController {
+export default class jobController {
     constructor() {
-        this.CompanyService = new companyServices(companyModel);
+        this.JobService = new jobService(jobModel);
     }
 
-    async createCompany(req, res) {
+    async getAllJobs(req, res) {
         try {
-            const response = await this.CompanyService.createCompany(req.body);
+            const response = await this.JobService.getAllJobs();
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
+            }
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
+        }
+    }
+
+    async createJob(req, res) {
+        const { id } = req.params;
+
+        const createdBy = req.user._id; 
+        try {
+            const response = await this.JobService.createJob(id, createdBy);
 
             if(!response) {
                 new apiResponse(404, null, "Not Found");
@@ -21,12 +37,11 @@ export default class companyController {
         }
     }
 
-
-    async getCompany(req, res) {
+    async getJobById(req, res) {
         const { id } = req.params;
     
         try {
-            const response = await this.CompanyService.getCompanyById(id);
+            const response = await this.JobService.getJobById(id);
             if(!response) {
                 new apiResponse(404, null, "Not Found");
             }
@@ -39,13 +54,13 @@ export default class companyController {
 
 
 
-    async updateCompany(req, res) {
+    async updateJob(req, res) {
 
         const { id } = req.params;
         const updates = req.body;
 
         try {
-            const response = await this.CompanyService.updateCompany(id, updates);
+            const response = await this.JobService.updateJob(id, updates);
 
             if(!response) {
                 new apiResponse(404, null, "Not Found");
@@ -57,11 +72,12 @@ export default class companyController {
         }
     }
 
-    async deleteCompany(req, res) {
+    async deleteJob(req, res) {
+        console.log("Controller later : deleteJob");
         const { id } = req.params;
 
         try {
-            const response = await this.CompanyService.deleteCompany(id);
+            const response = await this.JobService.deleteJob(id);
 
             if(!response) {
                 new apiResponse(404, null, "Not Found");
@@ -73,11 +89,12 @@ export default class companyController {
         }
     }
 
-    async addJNFToCompany(req, res) {
+    async activateJob(req, res) {
         const { id } = req.params;
-        const jnfData = req.body;
+
         try {
-            const response = await this.CompanyService.addJNFToCompany(id, jnfData);
+            const response = await this.JobService.activateJob(id);
+
             if(!response) {
                 new apiResponse(404, null, "Not Found");
             }
@@ -88,10 +105,12 @@ export default class companyController {
         }
     }
 
-    async getJNFsForCompany(req, res) {
+    async closeJob(req, res) {
         const { id } = req.params;
+
         try {
-            const response = await this.CompanyService.getJNFsForCompany(id);
+            const response = await this.JobService.closeJob(id);
+
             if(!response) {
                 new apiResponse(404, null, "Not Found");
             }

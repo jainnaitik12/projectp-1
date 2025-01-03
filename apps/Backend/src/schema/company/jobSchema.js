@@ -3,71 +3,47 @@ const Schema = _Schema;
 
 
 const JobSchema = new Schema(
-  {
-    company: { type: String, required: true },
-    title: { type: String, required: true },
-    description: String,
-    requirements: [String],
-    eligibility: {
-      departments: [String],
-      minCGPA: { type: Number, required: true },
-      batch: { type: Number, required: true },
-    },
-    salary: {
-      ctc: Number,
-      breakup: String,
-    },
-    rounds: [
-      {
-        name: String,
-        description: String,
-        date: Date,
-        venue: String,
+    {
+      course: {
+        type: String,
+        enum: ["B.Tech", "M.Tech", "MBA", "MCA", "M.Sc", "Ph.D"],
       },
-    ],
-    numberOfPositions: Number,
-    status: {
-      type: String,
-      enum: ["open", "closed"],
-      default: "open",
+      departments: {
+        type: [String], 
+        required: true,
+      },
+      designation: String,
+      jobDescription: String,
+      eligibilityCriteria: String,
+      ctc: Number,
+      takeHome: Number,
+      perks: String,
+      trainingPeriod: String,
+      placeOfPosting: String,
+  
+      jnf: {
+        type: Schema.Types.ObjectId,
+        ref: "JNF",
+        required: true,
+      },
+  
+      status: {
+        type: String,
+        enum: ["pendingAdminApproval", "open", "closed"],
+        default: "pendingAdminApproval",
+      },
+  
+      createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+  
+      createdAt: { type: Date, default: Date.now },
+      updatedAt: { type: Date, default: Date.now },
     },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    applicationDeadline: Date,
-   
-    jnf: {
-      type: Schema.Types.ObjectId,
-      ref: "JNF",
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ["draft", "pendingAdminApproval", "open", "closed"],
-      default: "draft",
-    },
-
-    adminApproval: {
-      approvedBy: { type: Schema.Types.ObjectId, ref: "User" },
-      approvedAt: Date,
-      comments: String,
-    },
-
-    analytics: {
-      views: { type: Number, default: 0 },
-      applications: { type: Number, default: 0 },
-      shortlisted: { type: Number, default: 0 },
-      selected: { type: Number, default: 0 },
-    },
-  },
-  { timestamps: true }
-);
+    { timestamps: true }
+  );
 
 
 const Job = model('Job', JobSchema);
