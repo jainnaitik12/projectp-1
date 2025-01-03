@@ -5,7 +5,6 @@ import jobModel from "../../models/jobModel.js";
 export default class jobController {
     constructor() {
         this.JobService = new jobService(jobModel);
-        this.userModel = new UserModel();
     }
 
     async getAllJobs(req, res) {

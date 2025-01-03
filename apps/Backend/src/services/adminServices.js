@@ -1,5 +1,5 @@
-import asyncHandler from "../utils/asyncHandler";
-import userServices from "./userServices";
+import asyncHandler from "../utils/asyncHandler.js";
+import userServices from "./userServices.js";
 
 export default class AdminServices {
   constructor() {
