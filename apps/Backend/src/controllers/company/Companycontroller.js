@@ -12,13 +12,13 @@ export default class companyController {
         try {
             const response = await this.CompanyService.createCompany(req.body);
 
-            if (!response) {
-                return res.status(500).json(new apiError(500, "Company not created"));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
             }
-
-            return res.status(201).json(new apiResponse(201, "Company created successfully", response));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -28,13 +28,13 @@ export default class companyController {
     
         try {
             const response = await this.CompanyService.getCompanyById(id);
-            if (!response) {
-                return res.status(404).json(new apiResponse(404, "Company not found", null));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
             }
-    
-            return res.status(200).json(new apiResponse(200, "Company fetched successfully", response));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -48,13 +48,13 @@ export default class companyController {
         try {
             const response = await this.CompanyService.updateCompany(id, updates);
 
-            if (!response) {
-                return res.status(404).json(new apiError(404, "Company not found"));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
             }
-
-            return res.status(200).json(new apiResponse(200, "Company updated successfully", response));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -64,13 +64,13 @@ export default class companyController {
         try {
             const response = await this.CompanyService.deleteCompany(id);
 
-            if (!response) {
-                return res.status(404).json(new apiError(404, "Company not found"));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
             }
-
-            return res.status(200).json(new apiResponse(200, "Company removed successfully"));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -79,10 +79,13 @@ export default class companyController {
         const jnfData = req.body;
         try {
             const response = await this.CompanyService.addJNFToCompany(companyId, jnfData);
-            if (!response) return res.status(500).json(new apiError(500, "Failed to add JNF"));
-            return res.status(200).json(new apiResponse(200, "JNF added to company successfully", response));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
+            }
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 
@@ -90,10 +93,13 @@ export default class companyController {
         const { companyId } = req.params;
         try {
             const response = await this.CompanyService.getJNFsForCompany(companyId);
-            if (!response) return res.status(404).json(new apiError(404, "JNFs not found"));
-            return res.status(200).json(new apiResponse(200, "JNFs fetched successfully", response));
-        } catch (error) {
-            return res.status(500).json(new apiError(500, error.message));
+            if(!response) {
+                new apiResponse(404, null, "Not Found");
+            }
+            res.status(200).json(response);
+        }
+        catch (error) {
+            new apiResponse(500, null, error.message);
         }
     }
 }
