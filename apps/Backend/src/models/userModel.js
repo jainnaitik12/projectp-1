@@ -17,7 +17,7 @@ export default class userModel {
             newUser.password = undefined; // Don't return password in response
             return new ApiResponse(201, newUser, "User created successfully");
         } catch (error) {
-            console.error("Error creating user:", error);
+            // console.error("Error creating user:", error);
             if (error.code === 11000) { // MongoDB duplicate key error
                 return new ApiResponse(409, null, "Email already exists");
             }

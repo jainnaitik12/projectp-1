@@ -117,5 +117,5 @@ export default class companyServices {
             return new apiResponse(500, null, error.message);
         }
     }
-
 }
+

@@ -81,6 +81,7 @@ const StudentSchema = new Schema({
     },
   ],
   projects: [projectSchema],
+
 applications: [{
     type: Schema.Types.ObjectId,
     ref: 'Application'

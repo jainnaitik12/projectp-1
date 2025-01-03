@@ -14,6 +14,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use("/api/v1", router);
 //http://localhost/api/v1/user/signup 
+
 mongoose.connect(process.env.DATABASE_URL, {
     serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
