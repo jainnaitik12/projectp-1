@@ -1,7 +1,6 @@
 import jobModel from "../models/jobModel.js";
 import apiResponse from "../utils/apiResponse.js";
 
-
 export default class JobService{
     constructor() {
             this.JobModel = new jobModel;
