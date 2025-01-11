@@ -17,6 +17,7 @@ const Login = lazy(() => import('../pages/auth/Login'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'));
 const Notifications = lazy(() => import('../pages/admin/Notifications'));
+const CompanyDashboard = lazy(() => import('../components/company/CompanyDashboard'));
 // Error Pages
 const Error404 = lazy(() => import('../pages/Error404'));
 
@@ -88,6 +89,15 @@ const routes = [
       {
         path: 'reset-password',
         element: ResetPassword,
+      },
+    ],
+  },
+  {
+    path: '/company',
+    children: [
+      {
+        path: 'dashboard',
+        element: CompanyDashboard,
       },
     ],
   },

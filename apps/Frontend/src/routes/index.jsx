@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { CircularProgress, Box } from '@mui/material';
 import MainLayout from '../components/layout/MainLayout';
 import AuthLayout from '../components/layout/AuthLayout';
+import CompanyLayout from '../components/layout/company/CompanyLayout';
 import routes from './routes';
 import Error404 from '../pages/Error404';
 import Settings from '../pages/admin/Settings';
@@ -49,6 +50,18 @@ const AppRoutes = () => {
               />
             ))}
           <Route path="settings" element={<Settings />} />
+        </Route>
+        {/* Company Routes */}
+        <Route path="/company" element={<CompanyLayout />}>
+          {routes
+            .find((r) => r.path === '/company')
+            ?.children.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<route.element />}
+              />
+            ))}
         </Route>
 
         {/* Root Redirect */}
