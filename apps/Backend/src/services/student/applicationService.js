@@ -14,7 +14,10 @@ export default class ApplicationService {
       const student = await this.studentServices.getStudentById(studentId);
 
       const job = await this.jobServices.getJobById(jobId);
-
+      const isEligible = await this.checkEligibility(student, job);
+      if (!isEligible) {
+        return apiResponse(404, null, "You are not eligible for this job ");
+      }
       const application = new this.applicationModel.applyForJob(
         studentId,
         jobId
@@ -28,7 +31,6 @@ export default class ApplicationService {
       return new apiResponse(500, null, error.message);
     }
   }
-
   async getApplicationsByStudent(studentId) {
     try {
       const student = await this.studentServices.getStudentById(studentId);
@@ -37,9 +39,8 @@ export default class ApplicationService {
         return new apiResponse(404, null, "Student not found");
       }
 
-      const applications = await this.applicationModel.getApplicationsByStudent(
-        studentId
-      );
+      const applications =
+        await this.applicationModel.getApplicationsByStudent(studentId);
       return applications;
     } catch (error) {
       console.error("Service error:", error);

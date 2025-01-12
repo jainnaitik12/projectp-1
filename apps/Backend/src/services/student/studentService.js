@@ -1,14 +1,14 @@
 import StudentModel from "../../models/studentModel.js";
-import UserServices from "../userServices.js"
+import UserServices from "../userServices.js";
 import apiResponse from "../../utils/apiResponse.js";
 
 export default class StudentService {
-    constructor() {
-         this.studentModel = new StudentModel();
-         this.userServices = new UserServices();
-    }
-//basic services for students
-async registerStudent(studentData) {
+  constructor() {
+    this.studentModel = new StudentModel();
+    this.userServices = new UserServices();
+  }
+  //basic services for students
+  async registerStudent(studentData) {
     try {
       // Validate required fields
       if (
@@ -65,41 +65,50 @@ async registerStudent(studentData) {
       return new apiResponse(500, null, error.message);
     }
   }
-    async updateProfile(id,studentData){
-        try {
-            const updatedProfile = await this.studentModel.updateProfile(id,studentData);
-             return new apiResponse(
-            updatedProfile.statusCode,
-            updatedProfile.data,
-            updatedProfile.message
-        );
-            // return new apiResponse(200, updatedProfile.data, "Profile updated successfully");
-        } catch (error) {
-            return new apiResponse(500, null, error.message);
-        }
-    }
-
-   async getProfile(studentId){
+  async updateProfile(id, studentData) {
     try {
-        const profile = await this.studentModel.getProfile(studentId);
-         return new apiResponse(
-            profile.statusCode,
-            profile.data,
-            profile.message
-        );
-        // return new apiResponse(200, profile.data, "Profile fetched successfully");
+      const updatedProfile = await this.studentModel.updateProfile(
+        id,
+        studentData
+      );
+      return new apiResponse(
+        updatedProfile.statusCode,
+        updatedProfile.data,
+        updatedProfile.message
+      );
+      // return new apiResponse(200, updatedProfile.data, "Profile updated successfully");
     } catch (error) {
-        return new apiResponse(500, null, error.message);
+      return new apiResponse(500, null, error.message);
     }
-}
-    async getStudentById(studentId){
-        try {
-            const student = await this.studentModel.getStudentById(studentId);
-            return new apiResponse(200, student.data, "Student found successfully");
-        } catch (error) {
-            return new apiResponse(500, null, error.message);
-        }
-    }
-   
+  }
 
+  async getProfile(studentId) {
+    try {
+      const profile = await this.studentModel.getProfile(studentId);
+      return new apiResponse(profile.statusCode, profile.data, profile.message);
+      // return new apiResponse(200, profile.data, "Profile fetched successfully");
+    } catch (error) {
+      return new apiResponse(500, null, error.message);
+    }
+  }
+  async getStudentById(studentId) {
+    try {
+      const student = await this.studentModel.getStudentById(studentId);
+      return new apiResponse(200, student.data, "Student found successfully");
+    } catch (error) {
+      return new apiResponse(500, null, error.message);
+    }
+  }
+  async getStudentByRollNo(rollNo) {
+    try {
+      if (!rollNo) {
+        return apiResponse(400, null, "roll no is required");
+      }
+      const profile = await this.studentModel.getStudentByRollNo(rollNo);
+      return apiResponse(200, profile, "Profile fetched successfully");
+    } catch (error) {
+      console.log("error in student service", error);
+      return apiResponse(500, null, error.message);
+    }
+  }
 }
