@@ -11,7 +11,7 @@ const UserSchema = Schema({
     profileStatus: { type: String, enum: ['unlocked', 'locked'], default: 'unlocked'},
     unlockedBy: { type: Schema.Types.ObjectId, ref: "User" },
     verifiedBy: { type: Schema.Types.ObjectId, ref: "User", required: false },
-    userRoleAsAdmin: { type: String, enum: ['tpo', 'admin', 'pcc', 'superadmin', 'none'], required: false },
+    userRoleAsAdmin: { type: String, enum: ['owner', 'admin', 'pcc', 'superadmin', 'none'], required: false },
     user_role: { type: String, enum: ['admin', 'student', 'company'], required: [true, "User Role is required"] },
     Student: { type: Schema.Types.ObjectId, ref: "Student", required: false },
     Company: { type: Schema.Types.ObjectId, ref: "Company", required: false },

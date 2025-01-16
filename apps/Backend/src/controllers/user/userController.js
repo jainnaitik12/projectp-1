@@ -35,8 +35,8 @@ export default class userController {
         }
         res
             .status(200)
-            .cookie("authToken", result.data.authToken, options)
-            .cookie("refreshToken", result.data.refreshToken, options)
+            .cookie("authToken", result.data.user.authToken, options)
+            .cookie("refreshToken", result.data.user.refreshToken, options)
             .json(new apiResponse(result.statusCode, result.data, result.message));
     });
 

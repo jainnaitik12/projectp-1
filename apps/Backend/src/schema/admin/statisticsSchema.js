@@ -3,10 +3,13 @@ const Schema = _Schema;
 const PlacementAnalyticsSchema = new Schema(
   {
     academicYear: { type: String, required: true },
-    totalStudents: Number,
-    placedStudents: Number,
-    averageCTC: Number,
     highestCTC: Number,
+    lpaWiseStats: [
+      {
+        lpa: { type: Number },
+        numberofStudents: { type: Number },
+      }
+    ],
     companyWiseStats: [
       {
         company: String,
@@ -28,7 +31,7 @@ const PlacementAnalyticsSchema = new Schema(
 );
 export const PlacementAnalytics = mongoose.model(
   "PlacementAnalytics",
-  placementAnalyticsSchema
+  PlacementAnalyticsSchema
 );
 const PlacementAnalytics = model('PlacementAnalytics', PlacementAnalyticsSchema);
 

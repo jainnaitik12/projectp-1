@@ -11,7 +11,7 @@ const AdminSchema = new Schema({
         "postJobs",
         "manageEvents",
         "viewAnalytics",
-        "updateJobStatus",
+        "jobAccess",
         "contactRecruiter",
         "processStatusUpdates",
         "sendNotifications",

@@ -1,4 +1,4 @@
-import { Schema as _Schema, model,mongoose } from 'mongoose';
+import { Schema as _Schema, model, mongoose } from 'mongoose';
 const Schema = _Schema;
 
 const linkSchema = new Schema({
@@ -22,43 +22,43 @@ const StudentSchema = new Schema({
   // Locked fields with verification
   personalInfo: {
     isLocked: { type: Boolean, default: false },
-    name: { 
-      type: String, 
+    name: {
+      type: String,
       required: true,
     },
-    rollNumber: { 
-      type: Number, 
+    rollNumber: {
+      type: Number,
       required: true,
-      unique:true,
-     
+      unique: true,
+
     },
-    department: { 
-      type: String, 
+    department: {
+      type: String,
       required: true,
-      
+
     },
-    batch: { 
-      type: Number, 
+    batch: {
+      type: Number,
       required: true,
-    
+
     }
   },
 
   academics: {
     isLocked: { type: Boolean, default: false },
-    cgpa: { 
-      type: Number, 
+    cgpa: {
+      type: Number,
       required: true,
     },
     tenthMarks: {
       type: Number,
       required: true,
-      
+
     },
     twelfthMarks: {
       type: Number,
       required: true,
-      
+
     }
   },
 
@@ -81,11 +81,10 @@ const StudentSchema = new Schema({
     },
   ],
   projects: [projectSchema],
-
-applications: [{
+  applications: [{
     type: Schema.Types.ObjectId,
     ref: 'Application'
-}],
+  }],
   // Verification metadata
   verificationStatus: {
     type: String,
@@ -97,7 +96,7 @@ applications: [{
     ref: "User",
   },
   verificationDate: Date,
-
+  placed: { type: Boolean, default: false },
   // Track modifications
   modificationHistory: [{
     field: String,
@@ -117,22 +116,22 @@ applications: [{
 
 
 //middleware to prevent modification of locked fields
-StudentSchema.pre('save', function(next) {
-    // Check if personal info is locked and modified
-    if (this.personalInfo?.isLocked && this.isModified('personalInfo')) {
-        const error = new Error('Cannot modify locked personal information');
-        error.statusCode = 403;
-        return next(error);
-    }
+StudentSchema.pre('save', function (next) {
+  // Check if personal info is locked and modified
+  if (this.personalInfo?.isLocked && this.isModified('personalInfo')) {
+    const error = new Error('Cannot modify locked personal information');
+    error.statusCode = 403;
+    return next(error);
+  }
 
-    // Check if academics is locked and modified
-    if (this.academics?.isLocked && this.isModified('academics')) {
-        const error = new Error('Cannot modify locked academic information');
-        error.statusCode = 403;
-        return next(error);
-    }
+  // Check if academics is locked and modified
+  if (this.academics?.isLocked && this.isModified('academics')) {
+    const error = new Error('Cannot modify locked academic information');
+    error.statusCode = 403;
+    return next(error);
+  }
 
-    next();
+  next();
 });
 
 const Student = model('Student', StudentSchema);

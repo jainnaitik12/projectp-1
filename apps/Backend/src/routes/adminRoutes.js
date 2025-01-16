@@ -28,5 +28,8 @@ adminRouter.post("/demoteadmin",(req,res)=>{
 adminRouter.post("/promoteadmin",(req,res)=>{
     adminController.promoteAdmin(req,res);
 });
+//remove user
+//remove company
+//
 
 export default adminRouter;

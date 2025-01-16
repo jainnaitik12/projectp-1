@@ -29,11 +29,11 @@ export default class userServices {
 
             // Send verification email here
             // await sendVerificationEmail(userData.email, verificationToken);
+            console.log("hi");
 
             const authToken = user.data.generateAccessToken();
             const refreshToken = user.data.generateRefreshToken();
             await this.userModel.updateTokens(user.data._id, authToken, refreshToken);
-
 
             return new apiResponse(201, {
                 user: user.data,

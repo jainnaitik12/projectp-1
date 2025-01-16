@@ -12,7 +12,7 @@ export default class ApplicationModel {
         job: jobId,
       });
       if (existingApplication) {
-        return new apiResponse(400, null, "Already applied for this job");
+        return new apiResponse(400, null, "Already pplied for this job");
       }
       const application = new Application({
         student: studentId,
