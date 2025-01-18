@@ -7,7 +7,7 @@ import CompanyLayout from '../components/layout/company/CompanyLayout';
 import routes from './routes';
 import Error404 from '../pages/Error404';
 import Settings from '../pages/admin/Settings';
-
+import LandingPage from '../pages/Landing/LandingPage';
 const Loading = () => (
   <Box
     sx={{
@@ -66,7 +66,7 @@ const AppRoutes = () => {
 
         {/* Root Redirect */}
         <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-
+        <Route path="/landing" element={<LandingPage />} />
         {/* 404 Route */}
         <Route path="*" element={<Error404 />} />
       </Routes>

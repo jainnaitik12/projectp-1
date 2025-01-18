@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 
 // Admin Pages
+const LandingPage = lazy(() => import('../pages/Landing/LandingPage'));
 const Dashboard = lazy(() => import('../pages/admin/Dashboard'));
 const Students = lazy(() => import('../pages/admin/Students'));
 const Companies = lazy(() => import('../pages/admin/Companies'));
@@ -72,8 +73,12 @@ const routes = [
       {
         path: 'settings',
         element: Settings,
-      },
+      }
     ],
+  },
+  {
+    path: '/home',
+    element: LandingPage,
   },
   {
     path: '/auth',
@@ -101,10 +106,10 @@ const routes = [
       },
     ],
   },
-  {
-    path: '*',
-    element: Error404,
-  },
+  // {
+  //   path: '*',
+  //   element: Error404,
+  // },
 ];
 
 export default routes;

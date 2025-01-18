@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
 
+
+
+
 const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate('/auth/login');
+  };
   const [scrollOpacity, setScrollOpacity] = useState(1);
 
   useEffect(() => {
@@ -141,7 +150,7 @@ const HeroSection = () => {
           Login/Signup
         </Typography>
 
-        <Button
+        <Button onClick={handleButtonClick}
           variant="contained"
           sx={{
             backgroundColor: "#6C63FF",
@@ -158,7 +167,7 @@ const HeroSection = () => {
         >
           Admin
         </Button>
-        <Button
+        <Button onClick={handleButtonClick}
           variant="contained"
           sx={{
             backgroundColor: "#6C63FF",
@@ -175,7 +184,7 @@ const HeroSection = () => {
         >
           Student
         </Button>
-        <Button
+        <Button onClick={handleButtonClick}
           variant="contained"
           sx={{
             backgroundColor: "#6C63FF",
